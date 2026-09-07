@@ -1,0 +1,1930 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>দ্বীন শিক্ষা — সম্পূর্ণ কাস্টমাইজড</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Bengali:wght@400;500;600;700;800&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #0F9C88;
+    --primary2: #0B6E63;
+    --primary-dark: #062E29;
+    --primary-light: #E4F3EF;
+    --gold: #F0C555;
+    --gold2: #D4AF37;
+    --gold-dark: #9C7A1E;
+    --gold-light: #FBF3DD;
+    --accent: #5EEAD4;
+    --bg: #F2FAF8;
+    --surface: #FFFFFF;
+    --surface-glass: rgba(255,255,255,0.62);
+    --text: #0E1F1B;
+    --muted: #5C7370;
+    --border: #DCEEE8;
+    --shadow: 0 8px 30px rgba(6,46,41,0.10);
+    --shadow-lg: 0 20px 50px rgba(6,46,41,0.18);
+    --radius: 16px;
+    --transition: 0.3s ease;
+  }
+
+  [data-theme="dark"] {
+    --bg: #0D1A17;
+    --surface: #1A2E2A;
+    --surface-glass: rgba(26,46,42,0.8);
+    --text: #E8F0EE;
+    --muted: #8AA5A0;
+    --border: #2A4A44;
+    --shadow: 0 8px 30px rgba(0,0,0,0.4);
+    --shadow-lg: 0 20px 50px rgba(0,0,0,0.6);
+    --primary-light: #1A3A35;
+    --gold-light: #2A2515;
+  }
+
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html,body{height:100%;}
+  body{
+    font-family:'Noto Sans Bengali','Segoe UI',sans-serif;
+    background: var(--bg);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    padding-bottom:24px;
+    min-height:100%;
+    transition: background var(--transition), color var(--transition);
+  }
+  ::selection{background:var(--gold-light); color:var(--primary-dark);}
+  a{text-decoration:none; color:inherit;}
+  button{font-family:inherit; cursor:pointer;}
+
+  /* ===== AUTH SCREEN ===== */
+  #authScreen{
+    position:fixed; inset:0; z-index:200;
+    background: linear-gradient(160deg,var(--primary-dark) 0%, var(--primary2) 55%, #073E37 100%);
+    display:flex; align-items:center; justify-content:center;
+    padding:24px;
+    overflow-y:auto;
+  }
+  .auth-card{
+    width:100%; max-width:380px;
+    background:rgba(255,255,255,0.85);
+    backdrop-filter:blur(18px) saturate(160%);
+    border:1px solid rgba(255,255,255,0.5);
+    border-radius:24px;
+    padding:30px 24px 26px;
+    box-shadow:0 25px 60px rgba(0,0,0,0.4);
+    position:relative;
+    overflow:hidden;
+  }
+  [data-theme="dark"] .auth-card {
+    background: rgba(26,46,42,0.9);
+    border-color: rgba(255,255,255,0.1);
+  }
+  .auth-card::before{
+    content:"";
+    position:absolute; top:0; left:0; right:0; height:4px;
+    background:linear-gradient(90deg, var(--gold), var(--primary), var(--accent), var(--gold));
+    background-size:200% 100%;
+    animation:shimmer 4s linear infinite;
+  }
+  @keyframes shimmer{0%{background-position:0% 0;}100%{background-position:200% 0;}}
+  .auth-logo{
+    width:60px; height:60px;
+    margin:4px auto 12px;
+    background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+    border-radius:18px;
+    display:flex; align-items:center; justify-content:center;
+    box-shadow:0 10px 24px rgba(15,156,136,0.45), 0 0 0 4px rgba(240,197,85,0.18);
+  }
+  .auth-logo svg{width:30px;height:30px; stroke:#fff;}
+  .auth-title{text-align:center; font-size:20px; font-weight:800; color:var(--primary-dark);}
+  [data-theme="dark"] .auth-title { color: var(--gold); }
+  .auth-sub{text-align:center; font-size:12.5px; color:var(--muted); margin-top:4px; margin-bottom:20px;}
+
+  .auth-tabs{display:flex; background:var(--bg); border-radius:14px; padding:4px; margin-bottom:18px;}
+  .auth-tab-btn{
+    flex:1; padding:9px; border:none; background:transparent; border-radius:11px;
+    font-weight:700; font-size:13.5px; color:var(--muted); cursor:pointer; transition:all .15s ease;
+  }
+  .auth-tab-btn.active{background:linear-gradient(135deg,var(--primary),var(--primary2)); color:#fff; box-shadow:0 4px 10px rgba(15,156,136,0.35);}
+
+  .auth-form{display:none; flex-direction:column; gap:12px;}
+  .auth-form.active{display:flex;}
+  .field-group label{font-size:12px; font-weight:700; color:var(--primary-dark); margin-bottom:5px; display:block;}
+  [data-theme="dark"] .field-group label { color: var(--gold); }
+  .field-group input{
+    width:100%; padding:12px 14px; border-radius:12px;
+    border:1.5px solid var(--border); outline:none;
+    font-family:inherit; font-size:14px; background:rgba(255,255,255,0.9); color:var(--text);
+    transition:border-color .15s ease, box-shadow .15s ease;
+  }
+  [data-theme="dark"] .field-group input {
+    background: rgba(255,255,255,0.08);
+    color: var(--text);
+    border-color: var(--border);
+  }
+  .field-group input:focus{border-color:var(--primary); box-shadow:0 0 0 3px rgba(15,156,136,0.15);}
+  .auth-submit{
+    margin-top:4px;
+    background:linear-gradient(135deg,var(--primary),var(--primary-dark));
+    color:#fff; border:none; padding:13px; border-radius:12px;
+    font-weight:800; font-size:14.5px; cursor:pointer;
+    box-shadow:0 10px 20px rgba(15,156,136,0.35);
+  }
+  .auth-submit:active{transform:scale(0.98);}
+  .auth-msg{font-size:12.5px; text-align:center; min-height:16px; font-weight:600;}
+  .auth-msg.error{color:#C0392B;}
+  .auth-msg.success{color:var(--primary2);}
+  .auth-foot-note{text-align:center; font-size:11px; color:var(--muted); margin-top:14px; line-height:1.6;}
+
+  /* ===== HEADER ===== */
+  header.top{
+    background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);
+    color:#fff;
+    padding:18px 16px 20px;
+    position:sticky;
+    top:0;
+    z-index:50;
+    box-shadow:var(--shadow);
+    border-bottom:2px solid var(--gold);
+  }
+  .header-row{display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom:12px;}
+  .brand{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    min-width:0;
+    cursor:pointer;
+  }
+  .brand-icon{
+    width:40px; height:40px;
+    background:rgba(255,255,255,0.15);
+    backdrop-filter:blur(6px);
+    border:1px solid rgba(240,197,85,0.55);
+    border-radius:12px;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .brand-icon svg{width:20px;height:20px;stroke:var(--gold);}
+  .brand-text{min-width:0;}
+  .brand-text h1{
+    font-size:19px;
+    font-weight:800;
+    line-height:1.2;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .brand-text h1 .ticker-wrap{
+    display:inline-block;
+    overflow:hidden;
+    height:24px;
+    vertical-align:middle;
+    background:rgba(255,255,255,0.15);
+    border-radius:8px;
+    padding:0 10px;
+    border:1px solid rgba(240,197,85,0.3);
+    flex:1;
+    min-width:120px;
+    max-width:300px;
+  }
+  .brand-text h1 .ticker{
+    display:flex;
+    flex-direction:column;
+    animation: tickerScroll 16s infinite;
+  }
+  .brand-text h1 .ticker-item{
+    height:24px;
+    line-height:24px;
+    font-size:11px;
+    font-weight:600;
+    white-space:nowrap;
+    color:var(--gold);
+    text-align:center;
+  }
+  @keyframes tickerScroll {
+    0%, 25% { transform: translateY(0); }
+    33%, 58% { transform: translateY(-24px); }
+    66%, 91% { transform: translateY(-48px); }
+    100% { transform: translateY(0); }
+  }
+  .brand-text p{font-size:11.5px; opacity:0.85; font-weight:400; margin-top:1px;}
+  
+  .header-actions{display:flex; gap:6px; align-items:center;}
+  .menu-btn{
+    width:40px; height:40px;
+    background:rgba(255,255,255,0.15);
+    border:1px solid rgba(240,197,85,0.55);
+    border-radius:12px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    flex-shrink:0;
+  }
+  .menu-btn svg{width:20px;height:20px; stroke:#fff;}
+  .theme-toggle{
+    background:rgba(255,255,255,0.15);
+    border:1px solid rgba(240,197,85,0.35);
+    color:#fff;
+    padding:6px 12px;
+    border-radius:9px;
+    font-size:12px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:4px;
+  }
+  .voice-btn{
+    background:rgba(255,255,255,0.15);
+    border:1px solid rgba(240,197,85,0.35);
+    color:#fff;
+    padding:6px 10px;
+    border-radius:9px;
+    font-size:14px;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:4px;
+  }
+  .voice-btn.listening{
+    background:#E74C3C;
+    animation:pulse 0.8s infinite;
+  }
+  @keyframes pulse{
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.05);}
+  }
+
+  .welcome-bar{
+    display:flex; align-items:center; justify-content:space-between;
+    background:rgba(255,255,255,0.12);
+    backdrop-filter:blur(6px);
+    border:1px solid rgba(240,197,85,0.35);
+    border-radius:14px;
+    padding:9px 12px;
+    margin-bottom:12px;
+    font-size:12.5px;
+  }
+  .welcome-bar span{font-weight:700;}
+  .welcome-bar .wname{color:var(--gold);}
+  .logout-btn{
+    background:rgba(255,255,255,0.15);
+    border:none; color:#fff; font-size:11.5px; font-weight:700;
+    padding:6px 11px; border-radius:9px; cursor:pointer;
+  }
+
+  .search-wrap{position:relative; display:flex; align-items:center; gap:8px;}
+  .search-wrap input{
+    flex:1;
+    padding:12px 40px 12px 42px;
+    border-radius:14px;
+    border:none;
+    outline:none;
+    font-family:inherit;
+    font-size:14.5px;
+    background:rgba(255,255,255,0.96);
+    color:var(--text);
+    box-shadow:0 6px 16px rgba(0,0,0,0.12);
+  }
+  .search-wrap input::placeholder{color:#8B9E9B;}
+  .search-wrap svg.icon-search{
+    position:absolute; left:14px; top:50%; transform:translateY(-50%);
+    width:18px;height:18px; stroke:#6C8B87;
+    pointer-events:none;
+  }
+  .clear-btn{
+    position:absolute; right:10px; top:50%; transform:translateY(-50%);
+    width:22px;height:22px;
+    border:none; border-radius:50%;
+    background:#DCEAE7; color:#4E6764;
+    font-size:14px; line-height:1;
+    cursor:pointer;
+    display:none;
+    align-items:center; justify-content:center;
+  }
+  .clear-btn.show{display:flex;}
+  .voice-search-btn{
+    background:var(--gold);
+    border:none;
+    border-radius:12px;
+    padding:10px 12px;
+    font-size:18px;
+    cursor:pointer;
+    flex-shrink:0;
+    box-shadow:0 4px 12px rgba(240,197,85,0.4);
+    transition:all 0.3s ease;
+  }
+  .voice-search-btn:hover{transform:scale(1.05);}
+  .voice-search-btn.listening{
+    background:#E74C3C;
+    animation:pulse 0.8s infinite;
+  }
+
+  /* ===== DROPDOWN MENU ===== */
+  .dropdown-menu{
+    background:rgba(255,255,255,0.95);
+    backdrop-filter:blur(12px);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:8px 0;
+    box-shadow:var(--shadow-lg);
+    position:absolute;
+    top:100%;
+    right:0;
+    min-width:200px;
+    z-index:60;
+    display:none;
+    margin-top:4px;
+  }
+  [data-theme="dark"] .dropdown-menu{
+    background:rgba(26,46,42,0.95);
+    border-color:var(--border);
+  }
+  .dropdown-menu.open{display:block;}
+  .dropdown-menu a{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:10px 16px;
+    font-size:13px;
+    font-weight:500;
+    color:var(--text);
+    transition:background 0.15s ease;
+    cursor:pointer;
+    border:none;
+    background:transparent;
+    width:100%;
+    text-align:left;
+    font-family:inherit;
+  }
+  .dropdown-menu a:hover{background:var(--bg);}
+  .dropdown-menu a svg{width:18px;height:18px; stroke:var(--primary); flex-shrink:0;}
+  [data-theme="dark"] .dropdown-menu a svg{stroke:var(--gold);}
+
+  /* ===== DRAWER ===== */
+  .drawer-overlay{
+    position:fixed; inset:0;
+    background:rgba(6,30,27,0.55);
+    backdrop-filter:blur(2px);
+    z-index:90;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease;
+  }
+  .drawer-overlay.open{opacity:1; pointer-events:auto;}
+  .drawer{
+    position:fixed;
+    top:0; right:0;
+    height:100%;
+    width:86%;
+    max-width:330px;
+    background:rgba(255,255,255,0.9);
+    backdrop-filter:blur(20px) saturate(160%);
+    -webkit-backdrop-filter:blur(20px) saturate(160%);
+    z-index:100;
+    transform:translateX(100%);
+    transition:transform .3s ease;
+    display:flex;
+    flex-direction:column;
+    box-shadow:-8px 0 30px rgba(0,0,0,0.2);
+  }
+  [data-theme="dark"] .drawer {
+    background: rgba(26,46,42,0.95);
+  }
+  .drawer.open{transform:translateX(0);}
+  .drawer-head{
+    background:linear-gradient(135deg,var(--primary) 0%,var(--primary-dark) 100%);
+    color:#fff;
+    padding:24px 20px 18px;
+    position:relative;
+    border-bottom:3px solid var(--gold);
+  }
+  .drawer-close{
+    position:absolute; top:14px; right:14px;
+    width:30px; height:30px;
+    background:rgba(255,255,255,0.18);
+    border:none; border-radius:50%;
+    color:#fff; font-size:16px;
+    cursor:pointer;
+  }
+  .drawer-avatar{
+    width:56px;height:56px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.2);
+    border:2px solid var(--gold);
+    display:flex;align-items:center;justify-content:center;
+    font-size:22px; font-weight:800;
+    margin-bottom:10px;
+  }
+  .drawer-head h2{font-size:16px; font-weight:800;}
+  .drawer-head p{font-size:11.5px; opacity:0.85; margin-top:2px; word-break:break-all;}
+  .drawer-menu{display:flex; gap:6px; padding:14px 16px 0;}
+  .drawer-menu-btn{
+    flex:1; padding:9px 4px; text-align:center;
+    border:1px solid var(--border); background:var(--bg);
+    border-radius:10px; font-size:11px; font-weight:700; color:var(--muted);
+    cursor:pointer;
+  }
+  .drawer-menu-btn.active{background:linear-gradient(135deg,var(--primary),var(--primary2)); color:#fff; border-color:var(--primary);}
+  .drawer-body{padding:16px 20px 20px; overflow-y:auto; flex:1;}
+  .drawer-view{display:none;}
+  .drawer-view.active{display:block;}
+  .drawer-greet{font-size:14px; font-weight:700; color:var(--primary-dark); margin-bottom:8px;}
+  [data-theme="dark"] .drawer-greet { color: var(--gold); }
+  .drawer-bio{
+    font-size:13.5px; line-height:1.9; color:var(--text);
+    background:var(--bg);
+    border:1px solid var(--border);
+    border-left:3px solid var(--gold);
+    border-radius:12px;
+    padding:14px 16px;
+  }
+  .stat-row{
+    display:flex; justify-content:space-between; align-items:center;
+    background:var(--bg); border:1px solid var(--border);
+    border-radius:10px; padding:12px 14px; margin-bottom:10px;
+  }
+  .stat-row .lbl{font-size:12.5px; color:var(--muted); font-weight:600;}
+  .stat-row .val{font-size:16px; font-weight:800; color:var(--primary-dark);}
+  [data-theme="dark"] .stat-row .val { color: var(--gold); }
+  .stat-row .val.gold{color:var(--gold-dark);}
+
+  .contact-card{
+    margin-top:18px;
+    background:linear-gradient(150deg, var(--gold-light) 0%, #fff 100%);
+    border:1px solid #EEDDA8;
+    border-radius:16px;
+    padding:16px;
+    text-align:center;
+  }
+  [data-theme="dark"] .contact-card {
+    background: linear-gradient(150deg, #2A2515 0%, #1A2E2A 100%);
+    border-color: var(--gold-dark);
+  }
+  .contact-card p{font-size:13px; color:#6B551C; line-height:1.8; margin-bottom:12px;}
+  [data-theme="dark"] .contact-card p { color: var(--gold-light); }
+  .drawer-wa{
+    display:flex; align-items:center; justify-content:center; gap:8px;
+    background:linear-gradient(135deg,#25D366,#128C7E);
+    color:#fff;
+    font-weight:700;
+    font-size:13.5px;
+    padding:12px;
+    border-radius:12px;
+    box-shadow:0 8px 18px rgba(37,211,102,0.35);
+  }
+  .drawer-wa svg{width:19px;height:19px;}
+  .drawer-foot{
+    padding:14px 20px;
+    text-align:center;
+    font-size:10.5px;
+    color:var(--muted);
+    border-top:1px solid var(--border);
+  }
+  .drawer-foot .credit{font-weight:700; color:var(--primary-dark);}
+  [data-theme="dark"] .drawer-foot .credit { color: var(--gold); }
+
+  /* ===== TABS ===== */
+  nav.tabs{
+    position:sticky;
+    top:0;
+    z-index:40;
+    background:rgba(255,255,255,0.85);
+    backdrop-filter:blur(10px);
+    display:flex;
+    overflow-x:auto;
+    gap:6px;
+    padding:10px 12px;
+    border-bottom:1px solid var(--border);
+    scrollbar-width:none;
+  }
+  [data-theme="dark"] nav.tabs {
+    background: rgba(26,46,42,0.85);
+  }
+  nav.tabs::-webkit-scrollbar{display:none;}
+  .tab-btn{
+    display:flex; align-items:center; gap:6px;
+    white-space:nowrap;
+    padding:9px 14px;
+    border-radius:999px;
+    font-size:13.5px;
+    font-weight:600;
+    color:var(--muted);
+    background:var(--bg);
+    border:1px solid var(--border);
+    cursor:pointer;
+    transition:all .15s ease;
+    flex-shrink:0;
+  }
+  .tab-btn svg{width:15px;height:15px; stroke:currentColor;}
+  .tab-btn.active{background:linear-gradient(135deg,var(--primary),var(--primary2)); color:#fff; border-color:var(--primary); box-shadow:0 4px 10px rgba(15,156,136,0.3);}
+
+  main{max-width:760px; margin:0 auto; padding:16px 14px 40px;}
+  .panel{display:none; animation:fadeIn .25s ease;}
+  .panel.active{display:block;}
+  @keyframes fadeIn{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);}}
+
+  .section-title{
+    font-size:15px; font-weight:700; color:var(--primary-dark);
+    margin:4px 2px 12px;
+    display:flex; align-items:center; gap:7px;
+  }
+  [data-theme="dark"] .section-title { color: var(--gold); }
+  .section-title::before{content:""; width:4px; height:15px; background:linear-gradient(180deg,var(--gold),var(--primary)); border-radius:3px; display:inline-block;}
+  .hint{font-size:12.5px; color:var(--muted); margin:-6px 2px 14px;}
+
+  /* ===== POPULAR SURAH CARDS ===== */
+  .popular-scroll{display:flex; gap:10px; overflow-x:auto; padding-bottom:6px; margin-bottom:22px; scrollbar-width:none;}
+  .popular-scroll::-webkit-scrollbar{display:none;}
+  .pop-card{
+    flex:0 0 auto; width:210px;
+    background:linear-gradient(150deg,rgba(255,255,255,0.75) 0%, var(--gold-light) 140%);
+    backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,0.6);
+    border-top:3px solid var(--gold);
+    border-radius:16px;
+    padding:14px 15px;
+    cursor:pointer;
+    box-shadow:var(--shadow);
+    transition:transform .15s ease;
+  }
+  [data-theme="dark"] .pop-card {
+    background: linear-gradient(150deg, rgba(26,46,42,0.75) 0%, #2A2515 140%);
+    border-color: rgba(255,255,255,0.1);
+  }
+  .pop-card:active{transform:scale(0.98);}
+  .pop-card .pop-head{display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;}
+  .pop-card .pop-ar{font-family:'Amiri',serif; font-size:19px; color:var(--primary-dark);}
+  [data-theme="dark"] .pop-card .pop-ar { color: var(--gold); }
+  .pop-card .pop-bn{font-weight:800; font-size:14px; margin-top:2px;}
+  .pop-card .pop-meaning{font-size:11.5px; color:var(--gold-dark); font-weight:700; margin-top:1px;}
+  .pop-card .pop-desc{font-size:11.5px; color:var(--muted); line-height:1.6; margin-top:7px;}
+
+  /* ===== SURAH LIST ===== */
+  .surah-list{display:flex; flex-direction:column; gap:9px;}
+  .surah-card{
+    background:rgba(255,255,255,0.8);
+    backdrop-filter:blur(8px);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:12px 14px;
+    display:flex;
+    align-items:center;
+    gap:12px;
+    cursor:pointer;
+    transition:transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+  }
+  [data-theme="dark"] .surah-card {
+    background: rgba(26,46,42,0.6);
+  }
+  .surah-card:active{transform:scale(0.98);}
+  .surah-card:hover{border-color:var(--gold); box-shadow:var(--shadow);}
+  .surah-badge{
+    width:38px;height:38px;
+    border-radius:11px;
+    background:linear-gradient(135deg,var(--primary-light),#ffffff);
+    color:var(--primary-dark);
+    display:flex;align-items:center;justify-content:center;
+    font-weight:800; font-size:14px;
+    flex-shrink:0;
+    border:1px solid var(--border);
+  }
+  [data-theme="dark"] .surah-badge {
+    background: var(--primary-dark);
+    color: var(--gold);
+  }
+  .surah-info{flex:1; min-width:0;}
+  .surah-info .bn-name{font-weight:700; font-size:14.5px;}
+  .surah-info .en-name{font-size:11.5px; color:var(--muted); margin-top:1px;}
+  .surah-info .sub{font-size:12px; color:var(--muted); margin-top:4px; display:flex; gap:8px; flex-wrap:wrap;}
+  .type-tag{font-size:10.5px; font-weight:700; padding:2px 8px; border-radius:6px;}
+  .type-makki{background:#FBF1DE; color:#9A7418;}
+  [data-theme="dark"] .type-makki { background: #2A2515; color: var(--gold); }
+  .type-madani{background:var(--primary-light); color:var(--primary-dark);}
+  [data-theme="dark"] .type-madani { background: var(--primary-dark); color: var(--gold); }
+  .ar-name{font-family:'Amiri',serif; font-size:20px; color:var(--primary-dark); flex-shrink:0;}
+  [data-theme="dark"] .ar-name { color: var(--gold); }
+  mark{background:var(--gold-light); color:inherit; border-radius:3px; padding:0 1px;}
+  .no-result{text-align:center; color:var(--muted); padding:30px 10px; font-size:13.5px;}
+
+  /* ===== JUZ GRID ===== */
+  .juz-grid{display:grid; grid-template-columns:repeat(3,1fr); gap:10px;}
+  @media(min-width:480px){.juz-grid{grid-template-columns:repeat(4,1fr);}}
+  .juz-card{
+    background:rgba(255,255,255,0.8);
+    backdrop-filter:blur(8px);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:16px 8px;
+    text-align:center;
+    cursor:pointer;
+    transition:all .12s ease;
+  }
+  [data-theme="dark"] .juz-card {
+    background: rgba(26,46,42,0.6);
+  }
+  .juz-card:active{transform:scale(0.96);}
+  .juz-card:hover{border-color:var(--gold); box-shadow:var(--shadow);}
+  .juz-card .num{font-size:20px; font-weight:800; color:var(--primary-dark);}
+  [data-theme="dark"] .juz-card .num { color: var(--gold); }
+  .juz-card .lbl{font-size:11px; color:var(--muted); margin-top:3px;}
+
+  /* ===== TAJWEED / LETTERS ===== */
+  .letter-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-bottom:22px;}
+  @media(min-width:480px){.letter-grid{grid-template-columns:repeat(6,1fr);}}
+  .letter-card{background:rgba(255,255,255,0.8); backdrop-filter:blur(8px); border:1px solid var(--border); border-radius:12px; padding:12px 4px; text-align:center;}
+  [data-theme="dark"] .letter-card {
+    background: rgba(26,46,42,0.6);
+  }
+  .letter-card .ar{font-family:'Amiri',serif; font-size:24px; color:var(--primary-dark);}
+  [data-theme="dark"] .letter-card .ar { color: var(--gold); }
+  .letter-card .bn{font-size:10.5px; color:var(--muted); margin-top:4px;}
+
+  .rule-card{
+    background:rgba(255,255,255,0.85);
+    border:1px solid var(--border);
+    border-left:4px solid var(--primary);
+    border-radius:10px;
+    padding:14px 16px;
+    margin-bottom:10px;
+  }
+  [data-theme="dark"] .rule-card {
+    background: rgba(26,46,42,0.6);
+  }
+  .rule-card h4{font-size:14px; color:var(--primary-dark); margin-bottom:5px;}
+  [data-theme="dark"] .rule-card h4 { color: var(--gold); }
+  .rule-card p{font-size:13px; color:var(--text); line-height:1.7;}
+  .rule-card.gold-edge{border-left-color:var(--gold);}
+
+  /* ===== RAKAT TABLE ===== */
+  .rakat-table{width:100%; border-collapse:collapse; background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden; margin-bottom:20px; box-shadow:var(--shadow);}
+  [data-theme="dark"] .rakat-table { background: rgba(26,46,42,0.6); }
+  .rakat-table th{background:linear-gradient(135deg,var(--primary),var(--primary2)); color:#fff; font-size:12.5px; padding:10px 6px;}
+  .rakat-table td{text-align:center; font-size:13px; padding:9px 6px; border-top:1px solid var(--border);}
+  .rakat-table tr:nth-child(even) td{background:var(--bg);}
+  [data-theme="dark"] .rakat-table tr:nth-child(even) td { background: rgba(26,46,42,0.4); }
+  .rakat-table td:first-child{font-weight:700; color:var(--primary-dark); text-align:right; padding-right:10px;}
+  [data-theme="dark"] .rakat-table td:first-child { color: var(--gold); }
+
+  /* ===== ACCORDION ===== */
+  details.acc{background:rgba(255,255,255,0.85); border:1px solid var(--border); border-radius:12px; margin-bottom:10px; overflow:hidden;}
+  [data-theme="dark"] details.acc { background: rgba(26,46,42,0.6); }
+  details.acc summary{
+    padding:14px 16px; font-weight:700; font-size:14px; cursor:pointer; list-style:none;
+    display:flex; justify-content:space-between; align-items:center; color:var(--primary-dark);
+  }
+  [data-theme="dark"] details.acc summary { color: var(--gold); }
+  details.acc summary::-webkit-details-marker{display:none;}
+  details.acc summary::after{content:"+"; font-size:20px; color:var(--gold-dark); transition:transform .2s ease;}
+  details.acc[open] summary::after{transform:rotate(45deg);}
+  details.acc .acc-body{padding:0 16px 16px;}
+  details.acc ol{padding-inline-start:18px; display:flex; flex-direction:column; gap:8px;}
+  details.acc li{font-size:13.5px; line-height:1.7; color:var(--text);}
+
+  /* ===== HADITH ===== */
+  .hadith-card{
+    background:rgba(255,255,255,0.85);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:16px;
+    margin-bottom:12px;
+    box-shadow:var(--shadow);
+  }
+  [data-theme="dark"] .hadith-card {
+    background: rgba(26,46,42,0.6);
+  }
+  .hadith-card .ar-text{
+    font-family:'Amiri',serif; font-size:19px; color:var(--primary-dark);
+    text-align:right; line-height:1.9; margin-bottom:10px;
+    padding-bottom:10px; border-bottom:1px dashed var(--border);
+  }
+  [data-theme="dark"] .hadith-card .ar-text { color: var(--gold); }
+  .hadith-card p.bn-text{font-size:14px; line-height:1.8; color:var(--text);}
+  .hadith-card .lesson{
+    margin-top:10px; background:var(--gold-light); border-radius:8px;
+    padding:9px 11px; font-size:12.5px; color:#6B551C; line-height:1.6;
+  }
+  [data-theme="dark"] .hadith-card .lesson {
+    background: #2A2515;
+    color: var(--gold-light);
+  }
+  .hadith-card .lesson b{color:var(--gold-dark);}
+  .hadith-card .src{margin-top:10px; font-size:11.5px; font-weight:700; color:var(--gold-dark);}
+
+  /* ===== DUA ===== */
+  .dua-card{
+    background:rgba(255,255,255,0.85);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:15px 16px;
+    margin-bottom:12px;
+  }
+  [data-theme="dark"] .dua-card {
+    background: rgba(26,46,42,0.6);
+  }
+  .dua-card h4{font-size:13.5px; color:var(--primary-dark); margin-bottom:8px;}
+  [data-theme="dark"] .dua-card h4 { color: var(--gold); }
+  .dua-card .ar-text{font-family:'Amiri',serif; font-size:18px; color:var(--primary-dark); text-align:right; line-height:1.8; margin-bottom:8px;}
+  [data-theme="dark"] .dua-card .ar-text { color: var(--gold); }
+  .dua-card .bn-text{font-size:13px; color:var(--text); line-height:1.7;}
+  .note-card{
+    background:var(--gold-light); border:1px solid #EEDDA8; border-radius:12px;
+    padding:14px 16px; font-size:13px; color:#6B551C; line-height:1.8; margin-bottom:16px;
+  }
+  [data-theme="dark"] .note-card {
+    background: #2A2515;
+    border-color: var(--gold-dark);
+    color: var(--gold-light);
+  }
+
+  /* ===== PRAYER TIMES ===== */
+  .prayer-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .prayer-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 6px;
+    text-align: center;
+  }
+  [data-theme="dark"] .prayer-item { background: rgba(26,46,42,0.6); }
+  .prayer-item .p-name { font-size: 11px; color: var(--muted); }
+  .prayer-item .p-time { font-size: 14px; font-weight: 700; color: var(--primary-dark); }
+  [data-theme="dark"] .prayer-item .p-time { color: var(--gold); }
+
+  /* ===== AMAL TRACKER ===== */
+  .amal-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+  .amal-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 12px;
+    text-align: center;
+  }
+  [data-theme="dark"] .amal-card { background: rgba(26,46,42,0.6); }
+  .amal-card .amal-name { font-size: 12px; color: var(--muted); }
+  .amal-card .amal-count { font-size: 20px; font-weight: 800; color: var(--primary-dark); }
+  [data-theme="dark"] .amal-card .amal-count { color: var(--gold); }
+  .amal-btn {
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    border-radius: 6px;
+    padding: 4px 12px;
+    font-size: 12px;
+    cursor: pointer;
+    margin-top: 4px;
+  }
+  .amal-btn:active { transform: scale(0.95); }
+
+  /* ===== COMPASS ===== */
+  .compass-container {
+    text-align: center;
+    padding: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    margin-bottom: 16px;
+  }
+  [data-theme="dark"] .compass-container { background: rgba(26,46,42,0.6); }
+  .compass {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 3px solid var(--gold);
+    margin: 0 auto 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--primary-dark);
+    background: var(--bg);
+    transition: transform 0.5s ease;
+  }
+  [data-theme="dark"] .compass { background: var(--primary-dark); color: var(--gold); }
+  .compass .direction {
+    position: absolute;
+    font-size: 11px;
+    color: var(--muted);
+  }
+  .compass .n { top: 4px; left: 50%; transform: translateX(-50%); color: #E74C3C; }
+  .compass .s { bottom: 4px; left: 50%; transform: translateX(-50%); }
+  .compass .e { right: 4px; top: 50%; transform: translateY(-50%); }
+  .compass .w { left: 4px; top: 50%; transform: translateY(-50%); }
+  .compass .arrow {
+    font-size: 28px;
+    color: var(--gold);
+  }
+
+  /* ===== HOLY DAYS ===== */
+  .day-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .day-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 10px 8px;
+    text-align: center;
+  }
+  [data-theme="dark"] .day-card { background: rgba(26,46,42,0.6); }
+  .day-card .day-name { font-size: 13px; font-weight: 700; color: var(--primary-dark); }
+  [data-theme="dark"] .day-card .day-name { color: var(--gold); }
+  .day-card .day-desc { font-size: 11px; color: var(--muted); }
+
+  /* ===== WHATSAPP FLOAT ===== */
+  .wa-float{
+    position:fixed; right:16px; bottom:20px; z-index:60;
+    display:flex; align-items:center; gap:8px;
+    background:linear-gradient(135deg,#25D366,#128C7E); color:#fff;
+    padding:12px 16px; border-radius:999px;
+    box-shadow:0 6px 18px rgba(37,211,102,0.45);
+    font-weight:700; font-size:13px;
+    animation:waPulse 2.4s infinite;
+  }
+  .wa-float svg{width:22px;height:22px; flex-shrink:0;}
+  @keyframes waPulse{
+    0%{box-shadow:0 6px 18px rgba(37,211,102,0.45);}
+    50%{box-shadow:0 6px 22px rgba(37,211,102,0.7);}
+    100%{box-shadow:0 6px 18px rgba(37,211,102,0.45);}
+  }
+  @media(max-width:380px){
+    .wa-float span{display:none;}
+    .wa-float{padding:13px; border-radius:50%;}
+  }
+
+  footer{text-align:center; font-size:11.5px; color:var(--muted); padding:22px 14px 90px; line-height:1.8;}
+  footer .credit{font-weight:700; color:var(--primary-dark);}
+  [data-theme="dark"] footer .credit { color: var(--gold); }
+
+  /* ===== SCROLLBAR ===== */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+</style>
+</head>
+<body>
+
+<!-- ===================== AUTH SCREEN ===================== -->
+<div id="authScreen">
+  <div class="auth-card">
+    <div class="auth-logo">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+    </div>
+    <div class="auth-title">দ্বীন শিক্ষা</div>
+    <div class="auth-sub">চালিয়ে যেতে লগইন অথবা রেজিস্ট্রেশন করুন</div>
+
+    <div class="auth-tabs">
+      <button class="auth-tab-btn active" data-auth="login">লগইন</button>
+      <button class="auth-tab-btn" data-auth="register">রেজিস্ট্রেশন</button>
+    </div>
+
+    <form class="auth-form active" id="loginForm">
+      <div class="field-group">
+        <label>ইমেইল</label>
+        <input type="email" id="loginEmail" placeholder="you@example.com" required>
+      </div>
+      <div class="auth-msg" id="loginMsg"></div>
+      <button type="submit" class="auth-submit">লগইন করুন</button>
+      <div class="auth-foot-note">অ্যাকাউন্ট নেই? উপরে "রেজিস্ট্রেশন" ট্যাবে যান।</div>
+    </form>
+
+    <form class="auth-form" id="registerForm">
+      <div class="field-group">
+        <label>পুরো নাম</label>
+        <input type="text" id="regName" placeholder="আপনার নাম লিখুন" required>
+      </div>
+      <div class="field-group">
+        <label>ইমেইল</label>
+        <input type="email" id="regEmail" placeholder="you@example.com" required>
+      </div>
+      <div class="auth-msg" id="registerMsg"></div>
+      <button type="submit" class="auth-submit">রেজিস্ট্রেশন করুন</button>
+      <div class="auth-foot-note">এই ডেমো অ্যাপে তথ্য শুধু বর্তমান সেশনে সংরক্ষিত থাকে।</div>
+    </form>
+  </div>
+</div>
+
+<!-- ===================== MAIN APP ===================== -->
+<div id="appRoot" style="display:none;">
+
+  <header class="top">
+    <div class="header-row">
+      <div class="brand" id="brandClick">
+        <div class="brand-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
+        </div>
+        <div class="brand-text">
+          <h1>
+            দ্বীন শিক্ষা
+            <span class="ticker-wrap">
+              <span class="ticker">
+                <span class="ticker-item">📖 আজকের আয়াত: "ইন্না মাআল উসরি ইউসরা"</span>
+                <span class="ticker-item">📜 আজকের হাদিস: "সেরা তোমরা যারা কুরআন শেখে ও শেখায়"</span>
+                <span class="ticker-item">🕌 ঈদ মোবারক! আল্লাহ আমাদের কবুল করুন</span>
+              </span>
+            </span>
+          </h1>
+          <p>কুরআন, তাজবিদ ও দ্বীনী শিক্ষা — ক্রিয়েটেড বাই আজহারুল</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button class="voice-btn" id="voiceCommandBtn" title="ভয়েস কমান্ড">🎤</button>
+        <button class="theme-toggle" id="themeToggle">🌙</button>
+        <button class="menu-btn" id="menuBtn">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="7" x2="20" y2="7"/><line x1="4" y1="12" x2="20" y2="12"/><line x1="4" y1="17" x2="20" y2="17"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="welcome-bar">
+      <span>স্বাগতম, <span class="wname" id="welcomeName">বন্ধু</span></span>
+      <button class="logout-btn" id="logoutBtn">লগআউট</button>
+    </div>
+
+    <div class="search-wrap">
+      <svg class="icon-search" viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input type="text" id="searchInput" placeholder="সূরা, হাদিস বা তাজবিদ খুঁজুন...">
+      <button class="clear-btn" id="clearSearch">✕</button>
+      <button class="voice-search-btn" id="voiceSearchBtn" title="ভয়েস সার্চ">🎤</button>
+    </div>
+
+    <!-- Dropdown Menu -->
+    <div class="dropdown-menu" id="dropdownMenu">
+      <a data-panel="quranPanel">📖 কুরআন</a>
+      <a data-panel="juzPanel">📚 জুয (৩০ পারা)</a>
+      <a data-panel="tajweedPanel">🔤 তাজবিদ</a>
+      <a data-panel="salahPanel">🕌 সালাত</a>
+      <a data-panel="hadithPanel">📜 হাদিস (৫০টি)</a>
+      <a data-panel="duaPanel">🤲 দোয়া</a>
+      <a data-panel="morePanel">⭐ আরও</a>
+      <a id="dropdownDarkToggle">🌙 ডার্ক মোড</a>
+    </div>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab-btn active" data-panel="quranPanel">📖 কুরআন</button>
+    <button class="tab-btn" data-panel="juzPanel">📚 জুয</button>
+    <button class="tab-btn" data-panel="tajweedPanel">🔤 তাজবিদ</button>
+    <button class="tab-btn" data-panel="salahPanel">🕌 সালাত</button>
+    <button class="tab-btn" data-panel="hadithPanel">📜 হাদিস</button>
+    <button class="tab-btn" data-panel="duaPanel">🤲 দোয়া</button>
+    <button class="tab-btn" data-panel="morePanel">⭐ আরও</button>
+  </nav>
+
+  <main>
+    <!-- ===== QURAN PANEL ===== -->
+    <section class="panel active" id="quranPanel">
+      <div class="section-title">জনপ্রিয় সূরাসমূহ</div>
+      <div class="popular-scroll" id="popularScroll"></div>
+
+      <div class="section-title">সকল সূরা (১১৪টি)</div>
+      <div class="hint">যেকোনো সূরায় ট্যাপ করলে quran.com এ ওপেন হবে</div>
+      <div class="surah-list" id="surahList"></div>
+      <div class="no-result" id="noResult" style="display:none;">কোনো সূরা পাওয়া যায়নি</div>
+    </section>
+
+    <!-- ===== JUZ PANEL ===== -->
+    <section class="panel" id="juzPanel">
+      <div class="section-title">৩০টি পারা / জুয</div>
+      <div class="hint">প্রতিটি জুয কুরআনের একটি নির্দিষ্ট অংশ</div>
+      <div class="juz-grid" id="juzGrid"></div>
+    </section>
+
+    <!-- ===== TAJWEED PANEL ===== -->
+    <section class="panel" id="tajweedPanel">
+      <div class="section-title">আরবি বর্ণমালা (হরফসমূহ)</div>
+      <div class="letter-grid" id="letterGrid"></div>
+
+      <div class="section-title">তাজবিদের মূল নিয়মসমূহ</div>
+      <div id="tajweedRules"></div>
+    </section>
+
+    <!-- ===== SALAH PANEL ===== -->
+    <section class="panel" id="salahPanel">
+      <div class="section-title">দৈনিক ফরজ নামাজের রাকাত</div>
+      <table class="rakat-table">
+        <thead><tr><th>নামাজ</th><th>সুন্নত</th><th>ফরজ</th><th>সুন্নত</th><th>নফল</th><th>বিতর</th></tr></thead>
+        <tbody>
+          <tr><td>ফজর</td><td>২</td><td>২</td><td>-</td><td>-</td><td>-</td></tr>
+          <tr><td>যোহর</td><td>৪</td><td>৪</td><td>২</td><td>২</td><td>-</td></tr>
+          <tr><td>আসর</td><td>৪</td><td>৪</td><td>-</td><td>-</td><td>-</td></tr>
+          <tr><td>মাগরিব</td><td>-</td><td>৩</td><td>২</td><td>২</td><td>-</td></tr>
+          <tr><td>ইশা</td><td>৪</td><td>৪</td><td>২</td><td>২</td><td>৩</td></tr>
+        </tbody>
+      </table>
+
+      <div class="section-title">নামাজের ধাপসমূহ</div>
+      <details class="acc" open>
+        <summary>ওজু করার নিয়ম</summary>
+        <div class="acc-body">
+          <ol>
+            <li>নিয়ত করে বিসমিল্লাহ বলে শুরু করা</li>
+            <li>দুই হাত কব্জি পর্যন্ত তিনবার ধোয়া</li>
+            <li>কুলি করা ও নাকে পানি দেওয়া তিনবার</li>
+            <li>সম্পূর্ণ মুখমণ্ডল তিনবার ধোয়া</li>
+            <li>দুই হাত কনুইসহ তিনবার ধোয়া</li>
+            <li>মাথা মাসেহ করা ও কান মাসেহ করা</li>
+            <li>দুই পা টাখনুসহ তিনবার ধোয়া</li>
+          </ol>
+        </div>
+      </details>
+      <details class="acc">
+        <summary>নামাজের মূল ধাপ</summary>
+        <div class="acc-body">
+          <ol>
+            <li>নিয়ত করে তাকবীরে তাহরীমা বলা</li>
+            <li>সূরা ফাতিহা ও অতিরিক্ত সূরা পাঠ করা</li>
+            <li>রুকু করা ও তাসবীহ পড়া</li>
+            <li>রুকু থেকে উঠে সোজা হয়ে দাঁড়ানো</li>
+            <li>সিজদা করা (দুইবার) ও তাসবীহ পড়া</li>
+            <li>শেষ রাকাতে তাশাহহুদ, দরূদ ও দোয়া পড়া</li>
+            <li>সালাম ফিরিয়ে নামাজ শেষ করা</li>
+          </ol>
+        </div>
+      </details>
+    </section>
+
+    <!-- ===== HADITH PANEL ===== -->
+    <section class="panel" id="hadithPanel">
+      <div class="section-title">৫০টি নির্বাচিত হাদিস</div>
+      <div id="hadithList"></div>
+    </section>
+
+    <!-- ===== DUA PANEL ===== -->
+    <section class="panel" id="duaPanel">
+      <div class="note-card">এখানে দৈনন্দিন জীবনের কিছু গুরুত্বপূর্ণ দোয়া তুলে ধরা হলো।</div>
+      <div id="duaList"></div>
+    </section>
+
+    <!-- ===== MORE PANEL ===== -->
+    <section class="panel" id="morePanel">
+      <div class="section-title">ক্রিয়েটেড বাই আজহারুল</div>
+      <div class="drawer-bio" style="margin-bottom:16px;">
+        <p><strong>আসসালামু আলাইকুম! 🙏</strong></p>
+        <p>আমি <strong>আজহারুল</strong>।</p>
+        <p>🏠 বাসা: <strong>সিলেট</strong></p>
+        <p>🕌 ধর্ম: <strong>মুসলিম</strong></p>
+        <p>🎂 বয়স: <strong>১৯ বছর</strong></p>
+        <p>📚 শিক্ষা: <strong>জেনারেল শিক্ষিত</strong></p>
+        <br>
+        <p><strong>আমার শখ:</strong></p>
+        <p>📖 কুরআন তিলাওয়াত</p>
+        <p>🕌 নামাজ আদায়</p>
+        <p>📚 ইসলামিক বই পড়া</p>
+        <p>🎤 দ্বীনী আলোচনা করা</p>
+        <br>
+        <p><strong>আমার উদ্দেশ্য:</strong></p>
+        <p>✔️ সঠিকভাবে কুরআন শিক্ষা দেওয়া</p>
+        <p>✔️ সহিহ তাজবিদ শেখানো</p>
+        <p>✔️ সহিহ হাদিস প্রচার করা</p>
+        <p>✔️ মুসলিম ভাইদের দ্বীনী সাহায্য করা</p>
+        <br>
+        <p><em>"যে ব্যক্তি কুরআন শেখে ও শেখায়, সে-ই সর্বোত্তম।"</em></p>
+        <p><strong>(সহিহ বুখারী)</strong></p>
+      </div>
+
+      <div class="section-title">🕌 নামাজের সময় (সিলেট)</div>
+      <div class="prayer-grid" id="prayerTimes">
+        <div class="prayer-item"><div class="p-name">ফজর</div><div class="p-time">৫:২০ AM</div></div>
+        <div class="prayer-item"><div class="p-name">যোহর</div><div class="p-time">১২:০৫ PM</div></div>
+        <div class="prayer-item"><div class="p-name">আসর</div><div class="p-time">৩:৪৫ PM</div></div>
+        <div class="prayer-item"><div class="p-name">মাগরিব</div><div class="p-time">৫:৫৫ PM</div></div>
+        <div class="prayer-item"><div class="p-name">ইশা</div><div class="p-time">৭:২০ PM</div></div>
+      </div>
+
+      <div class="section-title">🧭 কিবলা কম্পাস</div>
+      <div class="compass-container">
+        <div class="compass" id="compass">
+          <span class="direction n">N</span>
+          <span class="direction s">S</span>
+          <span class="direction e">E</span>
+          <span class="direction w">W</span>
+          <span class="arrow">🕋</span>
+        </div>
+        <p style="font-size:12px; color:var(--muted);">কিবলার দিক: দক্ষিণ-পশ্চিম (২৯০°)</p>
+      </div>
+
+      <div class="section-title">📅 পবিত্র মাস ও দিনসমূহ</div>
+      <div class="day-grid" id="holyDays">
+        <div class="day-card"><div class="day-name">রমজান</div><div class="day-desc">পবিত্র রোজার মাস</div></div>
+        <div class="day-card"><div class="day-name">জিলহজ</div><div class="day-desc">হজ্জের মাস</div></div>
+        <div class="day-card"><div class="day-name">মহররম</div><div class="day-desc">আশুরার মাস</div></div>
+        <div class="day-card"><div class="day-name">শবে বরাত</div><div class="day-desc">ক্ষমার রজনী</div></div>
+        <div class="day-card"><div class="day-name">লাইলাতুল কদর</div><div class="day-desc">হাজার মাসের চেয়ে উত্তম</div></div>
+        <div class="day-card"><div class="day-name">ঈদুল ফিতর</div><div class="day-desc">রমজানের পর উৎসব</div></div>
+        <div class="day-card"><div class="day-name">ঈদুল আযহা</div><div class="day-desc">কুরবানীর ঈদ</div></div>
+        <div class="day-card"><div class="day-name">শবে মেরাজ</div><div class="day-desc">উর্ধ্বযাত্রার রজনী</div></div>
+      </div>
+
+      <div class="section-title">📊 দৈনিক আমল ট্র্যাকার</div>
+      <div class="amal-grid" id="amalTracker">
+        <div class="amal-card"><div class="amal-name">৫ ওয়াক্ত নামাজ</div><div class="amal-count" id="amalSalah">০/৫</div><button class="amal-btn" data-amal="salah">+১</button></div>
+        <div class="amal-card"><div class="amal-name">কুরআন তিলাওয়াত</div><div class="amal-count" id="amalQuran">০</div><button class="amal-btn" data-amal="quran">+১</button></div>
+        <div class="amal-card"><div class="amal-name">তাসবীহ</div><div class="amal-count" id="amalTasbih">০</div><button class="amal-btn" data-amal="tasbih">+১০</button></div>
+        <div class="amal-card"><div class="amal-name">দরূদ শরীফ</div><div class="amal-count" id="amalDurud">০</div><button class="amal-btn" data-amal="durud">+১</button></div>
+        <div class="amal-card"><div class="amal-name">ইসতিগফার</div><div class="amal-count" id="amalIstigfar">০</div><button class="amal-btn" data-amal="istigfar">+১০</button></div>
+        <div class="amal-card"><div class="amal-name">রিসেট</div><div class="amal-count" style="font-size:12px;">সব শূন্য</div><button class="amal-btn" id="resetAmal">↺</button></div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="credit">দ্বীন শিক্ষা — ক্রিয়েটেড বাই আজহারুল</div>
+    <div>কুরআন, তাজবিদ ও দ্বীনী শিক্ষার একটি প্রয়াস</div>
+  </footer>
+
+  <a class="wa-float" id="waFloat" href="https://wa.me/8801756382661" target="_blank" rel="noopener">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A8.86 8.86 0 0 0 12.05 4c-4.86 0-8.82 3.94-8.82 8.79a8.7 8.7 0 0 0 1.19 4.42L3 21l3.9-1.03a8.85 8.85 0 0 0 4.15 1.05h.01c4.87 0 8.83-3.94 8.83-8.8a8.65 8.65 0 0 0-2.29-6.9zm-5.55 13.5a7.4 7.4 0 0 1-3.75-1.03l-.27-.16-2.79.74.75-2.72-.18-.28a7.3 7.3 0 0 1-1.13-3.88c0-4.05 3.31-7.35 7.38-7.35a7.34 7.34 0 0 1 5.22 2.16 7.24 7.24 0 0 1 2.16 5.19c0 4.05-3.31 7.33-7.39 7.33zm4.04-5.5c-.22-.11-1.31-.65-1.52-.72-.2-.08-.35-.11-.5.11-.15.22-.57.72-.7.87-.13.15-.26.16-.48.05-.22-.11-.94-.35-1.79-1.11-.66-.59-1.11-1.32-1.24-1.54-.13-.22-.01-.34.1-.45.1-.1.22-.26.33-.39.11-.13.15-.22.22-.37.07-.15.04-.28-.02-.39-.06-.11-.5-1.22-.69-1.67-.18-.44-.37-.38-.5-.38-.13-.01-.28-.01-.43-.01a.83.83 0 0 0-.6.28c-.2.22-.79.77-.79 1.88s.81 2.18.92 2.33c.11.15 1.6 2.44 3.87 3.42.54.23.96.37 1.29.48.54.17 1.03.15 1.42.09.43-.06 1.31-.53 1.5-1.05.18-.51.18-.95.13-1.05-.06-.1-.2-.16-.42-.27z"/></svg>
+    <span>WhatsApp</span>
+  </a>
+</div>
+
+<!-- ===================== DRAWER ===================== -->
+<div class="drawer-overlay" id="drawerOverlay"></div>
+<aside class="drawer" id="drawer">
+  <div class="drawer-head">
+    <button class="drawer-close" id="drawerClose">✕</button>
+    <div class="drawer-avatar" id="drawerAvatar">আ</div>
+    <h2 id="drawerName">ক্রিয়েটেড বাই আজহারুল</h2>
+    <p id="drawerEmail">সিলেট | ১৯ বছর | জেনারেল শিক্ষিত</p>
+  </div>
+  <div class="drawer-menu">
+    <button class="drawer-menu-btn active" data-view="aboutView">📖 আমার সম্পর্কে</button>
+    <button class="drawer-menu-btn" data-view="statsView">📊 অগ্রগতি</button>
+    <button class="drawer-menu-btn" data-view="settingsView">⚙️ সেটিংস</button>
+  </div>
+  <div class="drawer-body">
+    <div class="drawer-view active" id="aboutView">
+      <div class="drawer-greet">আসসালামু আলাইকুম! 🙏</div>
+      <div class="drawer-bio">
+        <p><strong>আমি আজহারুল</strong></p>
+        <p>🏠 বাসা: <strong>সিলেট</strong></p>
+        <p>🕌 ধর্ম: <strong>মুসলিম</strong></p>
+        <p>🎂 বয়স: <strong>১৯ বছর</strong></p>
+        <p>📚 শিক্ষা: <strong>জেনারেল শিক্ষিত</strong></p>
+        <br>
+        <p><strong>আমার শখ:</strong></p>
+        <p>📖 কুরআন তিলাওয়াত</p>
+        <p>🕌 নামাজ আদায়</p>
+        <p>📚 ইসলামিক বই পড়া</p>
+        <p>🎤 দ্বীনী আলোচনা করা</p>
+        <br>
+        <p><strong>আমার উদ্দেশ্য:</strong></p>
+        <p>✔️ সঠিকভাবে কুরআন শিক্ষা দেওয়া</p>
+        <p>✔️ সহিহ তাজবিদ শেখানো</p>
+        <p>✔️ সহিহ হাদিস প্রচার করা</p>
+        <p>✔️ মুসলিম ভাইদের দ্বীনী সাহায্য করা</p>
+        <br>
+        <p><em>"যে ব্যক্তি কুরআন শেখে ও শেখায়, সে-ই সর্বোত্তম।"</em></p>
+        <p><strong>(সহিহ বুখারী)</strong></p>
+      </div>
+
+      <div class="contact-card">
+        <p>আপনাদের যেকোনো মতামত, পরামর্শ বা যেকোনো প্রয়োজনে সরাসরি আমাকে হোয়াটসঅ্যাপে মেসেজ দিন।</p>
+        <a class="drawer-wa" href="https://wa.me/8801756382661" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.6 6.32A8.86 8.86 0 0 0 12.05 4c-4.86 0-8.82 3.94-8.82 8.79a8.7 8.7 0 0 0 1.19 4.42L3 21l3.9-1.03a8.85 8.85 0 0 0 4.15 1.05h.01c4.87 0 8.83-3.94 8.83-8.8a8.65 8.65 0 0 0-2.29-6.9zm-5.55 13.5a7.4 7.4 0 0 1-3.75-1.03l-.27-.16-2.79.74.75-2.72-.18-.28a7.3 7.3 0 0 1-1.13-3.88c0-4.05 3.31-7.35 7.38-7.35a7.34 7.34 0 0 1 5.22 2.16 7.24 7.24 0 0 1 2.16 5.19c0 4.05-3.31 7.33-7.39 7.33zm4.04-5.5c-.22-.11-1.31-.65-1.52-.72-.2-.08-.35-.11-.5.11-.15.22-.57.72-.7.87-.13.15-.26.16-.48.05-.22-.11-.94-.35-1.79-1.11-.66-.59-1.11-1.32-1.24-1.54-.13-.22-.01-.34.1-.45.1-.1.22-.26.33-.39.11-.13.15-.22.22-.37.07-.15.04-.28-.02-.39-.06-.11-.5-1.22-.69-1.67-.18-.44-.37-.38-.5-.38-.13-.01-.28-.01-.43-.01a.83.83 0 0 0-.6.28c-.2.22-.79.77-.79 1.88s.81 2.18.92 2.33c.11.15 1.6 2.44 3.87 3.42.54.23.96.37 1.29.48.54.17 1.03.15 1.42.09.43-.06 1.31-.53 1.5-1.05.18-.51.18-.95.13-1.05-.06-.1-.2-.16-.42-.27z"/></svg>
+          <span>হোয়াটসঅ্যাপে মেসেজ দিন</span>
+        </a>
+      </div>
+    </div>
+
+    <div class="drawer-view" id="statsView">
+      <div class="stat-row"><span class="lbl">মোট সূরা</span><span class="val">১১৪</span></div>
+      <div class="stat-row"><span class="lbl">মোট পারা</span><span class="val">৩০</span></div>
+      <div class="stat-row"><span class="lbl">সংরক্ষিত হাদিস</span><span class="val gold">৫০</span></div>
+      <div class="stat-row"><span class="lbl">সংরক্ষিত দোয়া</span><span class="val gold">৮</span></div>
+      <div class="stat-row"><span class="lbl">তাজবিদের নিয়ম</span><span class="val gold">১২</span></div>
+      <div class="stat-row"><span class="lbl">পবিত্র দিন</span><span class="val gold">৮</span></div>
+    </div>
+
+    <div class="drawer-view" id="settingsView">
+      <div style="display:flex; flex-direction:column; gap:12px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border);">
+          <span style="font-weight:600;">ডার্ক মোড</span>
+          <button id="themeToggleDrawer" style="background:var(--primary); color:#fff; border:none; border-radius:8px; padding:6px 16px; font-size:12px;">টগল</button>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border);">
+          <span style="font-weight:600;">ফন্ট সাইজ</span>
+          <div style="display:flex; gap:6px;">
+            <button id="fontSmall" style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:4px 10px;">A-</button>
+            <button id="fontLarge" style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:4px 10px;">A+</button>
+          </div>
+        </div>
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--border);">
+          <span style="font-weight:600;">ভাষা</span>
+          <select style="background:var(--bg); border:1px solid var(--border); border-radius:6px; padding:4px 8px; font-family:inherit;">
+            <option>বাংলা</option>
+            <option>English</option>
+            <option>العربية</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="drawer-foot">
+    <span class="credit">দ্বীন শিক্ষা — ক্রিয়েটেড বাই আজহারুল</span>
+  </div>
+</aside>
+
+<script>
+/* ============================================================
+   COMPLETE DATA
+   ============================================================ */
+
+// ---------- SURAH DATA (114) ----------
+const surahRaw = [
+["الفاتحة","আল-ফাতিহা","Al-Fatihah","সূচনা",7,"Makki"],
+["البقرة","আল-بাকারা","Al-Baqarah","গাভী",286,"Madani"],
+["آل عمران","আলে ইমরান","Aali Imran","ইমরানের পরিবার",200,"Madani"],
+["النساء","আন-নিসা","An-Nisa","নারী",176,"Madani"],
+["المائدة","আল-মায়িদা","Al-Ma'idah","খাদ্যভর্তি টেবিল",120,"Madani"],
+["الأنعام","আল-আনআম","Al-An'am","গবাদি পশু",165,"Makki"],
+["الأعراف","আল-আরাফ","Al-A'raf","উঁচু স্থানসমূহ",206,"Makki"],
+["الأنفال","আল-আনফাল","Al-Anfal","যুদ্ধলব্ধ সম্পদ",75,"Madani"],
+["التوبة","আত-তাওবা","At-Tawbah","তওবা",129,"Madani"],
+["يونس","ইউনুস","Yunus","ইউনুস",109,"Makki"],
+["هود","হুদ","Hud","হুদ",123,"Makki"],
+["يوسف","ইউসুফ","Yusuf","ইউসুফ",111,"Makki"],
+["الرعد","আর-রাদ","Ar-Ra'd","বজ্রধ্বনি",43,"Madani"],
+["إبراهيم","ইব্রাহিম","Ibrahim","ইব্রাহিম",52,"Makki"],
+["الحجر","আল-হিজর","Al-Hijr","আল-হিজর",99,"Makki"],
+["النحل","আন-নাহল","An-Nahl","মৌমাছি",128,"Makki"],
+["الإسراء","আল-ইসরা","Al-Isra","রাত্রিভ্রমণ",111,"Makki"],
+["الكهف","আল-কাহফ","Al-Kahf","গুহা",110,"Makki"],
+["مريم","মারইয়াম","Maryam","মারইয়াম",98,"Makki"],
+["طه","ত্বা-হা","Ta-Ha","ত্বা-হা",135,"Makki"],
+["الأنبياء","আল-আম্বিয়া","Al-Anbiya","নবীগণ",112,"Makki"],
+["الحج","আল-হাজ্জ","Al-Hajj","আল-হাজ্জ",78,"Madani"],
+["المؤمنون","আল-মুমিনূন","Al-Mu'minun","মুমিনগণ",118,"Makki"],
+["النور","আন-নূর","An-Nur","আলো",64,"Madani"],
+["الفرقان","আল-ফুরকান","Al-Furqan","সত্য-মিথ্যার পার্থক্যকারী",77,"Makki"],
+["الشعراء","আশ-শুআরা","Ash-Shu'ara","কবিগণ",227,"Makki"],
+["النمل","আন-নামল","An-Naml","পিপীলিকা",93,"Makki"],
+["القصص","আল-কাসাস","Al-Qasas","কাহিনী",88,"Makki"],
+["العنكبوت","আল-আনকাবূত","Al-Ankabut","মাকড়সা",69,"Makki"],
+["الروم","আর-রূম","Ar-Rum","রোমান জাতি",60,"Makki"],
+["لقمان","লোকমান","Luqman","লোকমান",34,"Makki"],
+["السجدة","আস-সাজদাহ","As-Sajdah","সিজদা",30,"Makki"],
+["الأحزاب","আল-আহযাব","Al-Ahzab","দলসমূহ",73,"Madani"],
+["سبأ","সাবা","Saba","সাবা",54,"Makki"],
+["فاطر","ফাতির","Fatir","স্রষ্টা",45,"Makki"],
+["يس","ইয়া-সীন","Ya-Sin","ইয়া-সীন",83,"Makki"],
+["الصافات","আস-সাফফাত","As-Saffat","সারিবদ্ধগণ",182,"Makki"],
+["ص","সা'দ","Sad","সা'দ",88,"Makki"],
+["الزمر","আয-যুমার","Az-Zumar","দলসমূহ",75,"Makki"],
+["غافر","গাফির","Ghafir","ক্ষমাশীল",85,"Makki"],
+["فصلت","হা-মীম সাজদাহ","Fussilat","হা-মীম সাজদাহ",54,"Makki"],
+["الشورى","আশ-শূরা","Ash-Shura","পরামর্শ",53,"Makki"],
+["الزخرف","আয-যুখরুফ","Az-Zukhruf","স্বর্ণালংকার",89,"Makki"],
+["الدخان","আদ-দুখান","Ad-Dukhan","ধোঁয়া",59,"Makki"],
+["الجاثية","আল-জাসিয়া","Al-Jathiyah","নতজানু",37,"Makki"],
+["الأحقاف","আল-আহকাফ","Al-Ahqaf","আল-আহকাফ",35,"Makki"],
+["محمد","মুহাম্মদ","Muhammad","মুহাম্মদ",38,"Madani"],
+["الفتح","আল-ফাতহ","Al-Fath","বিজয়",29,"Madani"],
+["الحجرات","আল-হুজুরাত","Al-Hujurat","কক্ষসমূহ",18,"Madani"],
+["ق","ক্বাফ","Qaf","ক্বাফ",45,"Makki"],
+["الذاريات","আয-যারিয়াত","Adh-Dhariyat","ধূলিঝড়",60,"Makki"],
+["الطور","আত-তূর","At-Tur","পাহাড়",49,"Makki"],
+["النجم","আন-নাজম","An-Najm","তারকা",62,"Makki"],
+["القمر","আল-কামার","Al-Qamar","চন্দ্র",55,"Makki"],
+["الرحمن","আর-রহমান","Ar-Rahman","পরম দয়ালু",78,"Madani"],
+["الواقعة","আল-ওয়াকিয়া","Al-Waqi'ah","অবধারিত ঘটনা",96,"Makki"],
+["الحديد","আল-হাদীদ","Al-Hadid","লোহা",29,"Madani"],
+["المجادلة","আল-মুজাদালাহ","Al-Mujadila","বাদানুবাদকারী নারী",22,"Madani"],
+["الحشر","আল-হাশর","Al-Hashr","সমাবেশ",24,"Madani"],
+["الممتحنة","আল-মুমতাহিনা","Al-Mumtahanah","পরীক্ষিতা নারী",13,"Madani"],
+["الصف","আস-সফ","As-Saff","সারি",14,"Madani"],
+["الجمعة","আল-জুমুআহ","Al-Jumu'ah","শুক্রবার",11,"Madani"],
+["المنافقون","আল-মুনাফিকুন","Al-Munafiqun","কপটাচারীগণ",11,"Madani"],
+["التغابن","আত-তাগাবুন","At-Taghabun","পারস্পরিক লাভ-ক্ষতি",18,"Madani"],
+["الطلاق","আত-তালাক","At-Talaq","তালাক",12,"Madani"],
+["التحريم","আত-তাহরীম","At-Tahrim","নিষিদ্ধকরণ",12,"Madani"],
+["الملك","আল-মুলক","Al-Mulk","সার্বভৌমত্ব",30,"Makki"],
+["القلم","আল-কলম","Al-Qalam","কলম",52,"Makki"],
+["الحاقة","আল-হাক্কাহ","Al-Haqqah","অবধারিত সত্য",52,"Makki"],
+["المعارج","আল-মাআরিজ","Al-Ma'arij","উন্নয়নের সোপান",44,"Makki"],
+["نوح","নূহ","Nuh","নূহ",28,"Makki"],
+["الجن","আল-জিন","Al-Jinn","আল-জিন",28,"Makki"],
+["المزمل","আল-মুযযাম্মিল","Al-Muzzammil","বস্ত্রাবৃত",20,"Makki"],
+["المدثر","আল-মুদ্দাসসির","Al-Muddaththir","চাদরাবৃত",56,"Makki"],
+["القيامة","আল-কিয়ামাহ","Al-Qiyamah","পুনরুত্থান",40,"Makki"],
+["الإنسان","আল-ইনসান","Al-Insan","মানুষ",31,"Madani"],
+["المرسلات","আল-মুরসালাত","Al-Mursalat","প্রেরিত বায়ুসমূহ",50,"Makki"],
+["النبأ","আন-নাবা","An-Naba","মহাসংবাদ",40,"Makki"],
+["النازعات","আন-নাযিআত","An-Nazi'at","উৎপাটনকারী",46,"Makki"],
+["عبس","আবাসা","Abasa","ভ্রুকুঞ্চিত করা",42,"Makki"],
+["التكوير","আত-তাকভীর","At-Takwir","অন্ধকারাচ্ছন্ন করা",29,"Makki"],
+["الإنفطار","আল-ইনফিতার","Al-Infitar","বিদীর্ণ হওয়া",19,"Makki"],
+["المطففين","আল-মুতাফফিফীন","Al-Mutaffifin","পরিমাপে কারচুপিকারী",36,"Makki"],
+["الإنشقاق","আল-ইনশিকাক","Al-Inshiqaq","বিদীর্ণ হওয়া",25,"Makki"],
+["البروج","আল-বুরূজ","Al-Buruj","নক্ষত্রপুঞ্জ",22,"Makki"],
+["الطارق","আত-তারিক","At-Tariq","রাতের আগন্তুক",17,"Makki"],
+["الأعلى","আল-আ'লা","Al-A'la","সর্বোচ্চ",19,"Makki"],
+["الغاشية","আল-গাশিয়া","Al-Ghashiyah","আচ্ছন্নকারী",26,"Makki"],
+["الفجر","আল-ফজর","Al-Fajr","ঊষা",30,"Makki"],
+["البلد","আল-বালাদ","Al-Balad","নগরী",20,"Makki"],
+["الشمس","আশ-শামস","Ash-Shams","সূর্য",15,"Makki"],
+["الليل","আল-লাইল","Al-Layl","রাত্রি",21,"Makki"],
+["الضحى","আদ-দুহা","Ad-Duha","পূর্বাহ্ন",11,"Makki"],
+["الشرح","আশ-শারহ","Ash-Sharh","বক্ষ প্রশস্তকরণ",8,"Makki"],
+["التين","আত-তীন","At-Tin","ডুমুর",8,"Makki"],
+["العلق","আল-আলাক","Al-Alaq","জমাট রক্ত",19,"Makki"],
+["القدر","আল-কদর","Al-Qadr","মহিমান্বিত রজনী",5,"Makki"],
+["البينة","আল-বাইয়িনাহ","Al-Bayyinah","সুস্পষ্ট প্রমাণ",8,"Madani"],
+["الزلزلة","আয-যালযালাহ","Az-Zalzalah","ভূমিকম্প",8,"Madani"],
+["العاديات","আল-আদিয়াত","Al-Adiyat","অভিযানকারী অশ্ব",11,"Makki"],
+["القارعة","আল-কারিয়া","Al-Qari'ah","মহাপ্রলয়",11,"Makki"],
+["التكاثر","আত-তাকাসুর","At-Takathur","প্রাচুর্যের প্রতিযোগিতা",8,"Makki"],
+["العصر","আল-আসর","Al-Asr","সময়",3,"Makki"],
+["الهمزة","আল-হুমাযা","Al-Humazah","পরনিন্দাকারী",9,"Makki"],
+["الفيل","আল-ফীল","Al-Fil","হাতি",5,"Makki"],
+["قريش","কুরাইশ","Quraysh","কুরাইশ",4,"Makki"],
+["الماعون","আল-মাঊন","Al-Ma'un","প্রয়োজনীয় দ্রব্যাদি",7,"Makki"],
+["الكوثر","আল-কাউসার","Al-Kawthar","প্রাচুর্য",3,"Makki"],
+["الكافرون","আল-কাফিরূন","Al-Kafirun","কাফিরগণ",6,"Makki"],
+["النصر","আন-নসর","An-Nasr","সাহায্য",3,"Madani"],
+["المسد","আল-মাসাদ","Al-Masad","খেজুর আঁশ",5,"Makki"],
+["الإخلاص","আল-ইখলাস","Al-Ikhlas","একনিষ্ঠতা",4,"Makki"],
+["الفلق","আল-ফালাক","Al-Falaq","উষা",5,"Makki"],
+["الناس","আন-নাস","An-Nas","মানবজাতি",6,"Makki"]
+];
+const surahs = surahRaw.map((s,i)=>({num:i+1, ar:s[0], bn:s[1], en:s[2], meaning:s[3], ayat:s[4], type:s[5]}));
+
+// ---------- 50 HADITH ----------
+const hadiths = [
+{ar:"إِنَّمَا الْأَعْمَالُ بِالنِّيَّاتِ", bn:"সকল কাজের ফলাফল নিয়তের উপর নির্ভরশীল।", lesson:"যেকোনো কাজ করার আগে আন্তরিক নিয়ত ঠিক করা অত্যন্ত গুরুত্বপূর্ণ।", src:"সহীহ বুখারী"},
+{ar:"مَنْ لَا يَرْحَمُ لَا يُرْحَمُ", bn:"যে দয়া করে না, তার প্রতি দয়া করা হয় না।", lesson:"মানুষ ও সৃষ্টিজগতের প্রতি দয়াশীল হওয়া মুমিনের বৈশিষ্ট্য।", src:"সহীহ বুখারী"},
+{ar:"الدِّينُ النَّصِيحَةُ", bn:"দ্বীন হলো কল্যাণকামিতা।", lesson:"আল্লাহ, তাঁর কিতাব, রাসূল ও মুসলিম সমাজের প্রতি কল্যাণকামী থাকা দ্বীনের অংশ।", src:"সহীহ মুসলিম"},
+{ar:"إِنَّ اللَّهَ يُحِبُّ التَّوَّابِينَ", bn:"আল্লাহ তওবাকারীদের ভালোবাসেন।", lesson:"সর্বদা তওবা করা এবং গুনাহ থেকে বিরত থাকা।", src:"তিরমিজি"},
+{ar:"مَنْ صَلَّى عَلَيَّ صَلَاةً صَلَّى اللَّهُ عَلَيْهِ بِهَا عَشْرًا", bn:"যে আমার উপর একবার দরূদ পড়ে, আল্লাহ তার উপর ১০ বার রহমত বর্ষণ করেন।", lesson:"বেশি বেশি দরূদ পড়া উচিত।", src:"সহীহ মুসলিম"},
+{ar:"الْمُسْلِمُ مَنْ سَلِمَ الْمُسْلِمُونَ مِنْ لِسَانِهِ وَيَدِهِ", bn:"মুসলিম সে যার জবান ও হাত থেকে অন্য মুসলিম নিরাপদ।", lesson:"অন্যদের কষ্ট না দেওয়া এবং নিরাপত্তা দেওয়া।", src:"সহীহ বুখারী"},
+{ar:"لَا يُؤْمِنُ أَحَدُكُمْ حَتَّى يُحِبَّ لِأَخِيهِ مَا يُحِبُّ لِنَفْسِهِ", bn:"তোমাদের কেউ মুমিন হতে পারবে না যতক্ষণ না সে তার ভাইয়ের জন্য তা ভালোবাসে যা নিজের জন্য ভালোবাসে।", lesson:"পরহিতৈষী হওয়া এবং অন্যদের ভালো কামনা করা।", src:"সহীহ বুখারী"},
+{ar:"الدُّعَاءُ هُوَ الْعِبَادَةُ", bn:"দোয়াই হলো ইবাদত।", lesson:"বেশি বেশি দোয়া করা এবং আল্লাহর কাছে চাওয়া।", src:"তিরমিজি"},
+{ar:"مَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الْآخِرِ فَلْيَقُلْ خَيْرًا أَوْ لِيَصْمُتْ", bn:"যে আল্লাহ ও শেষ দিনের প্রতি বিশ্বাস রাখে, সে ভালো কথা বলুক বা চুপ থাকুক।", lesson:"অপ্রয়োজনীয় কথা না বলা এবং ভালো কথা বলা।", src:"সহীহ বুখারী"},
+{ar:"الْحَلَالُ بَيِّنٌ وَالْحَرَامُ بَيِّنٌ", bn:"হালাল ও হারাম স্পষ্ট।", lesson:"সন্দেহজনক জিনিস এড়িয়ে চলা এবং হালাল-হারাম মেনে চলা।", src:"সহীহ বুখারী"},
+{ar:"لَا تَحَاسَدُوا وَلَا تَنَاجَشُوا", bn:"পরস্পর হিংসা করো না ও দাম বৃদ্ধির জন্য প্রতিযোগিতা করো না।", lesson:"ভ্রাতৃত্ববোধ এবং পরস্পরের প্রতি সদয় হওয়া।", src:"সহীহ মুসলিম"},
+{ar:"خَيْرُكُمْ مَنْ تَعَلَّمَ الْقُرْآنَ وَعَلَّمَهُ", bn:"তোমাদের মধ্যে সর্বোত্তম那人 যে কুরআন শেখে ও শেখায়।", lesson:"কুরআন শিক্ষার প্রচার এবং নিজে শেখা।", src:"সহীহ বুখারী"},
+{ar:"مَنْ يَرِدُ اللَّهُ بِهِ خَيْرًا يُفَقِّهْهُ فِي الدِّينِ", bn:"আল্লাহ যার ভালো চান, তাকে দ্বীনের গভীর জ্ঞান দান করেন।", lesson:"দ্বীনী জ্ঞান অর্জন এবং গভীরে যাওয়া।", src:"সহীহ বুখারী"},
+{ar:"الْمُؤْمِنُ لِلْمُؤْمِنِ كَالْبُنْيَانِ يَشُدُّ بَعْضُهُ بَعْضًا", bn:"মুমিনরা একে অপরের জন্য দেয়ালের মতো, এক অংশ অন্যটিকে শক্তিশালী করে।", lesson:"একতা ও ভ্রাতৃত্ববোধ এবং পরস্পরের সাহায্য করা।", src:"সহীহ বুখারী"},
+{ar:"مَنْ لَا يَشْكُرُ النَّاسَ لَا يَشْكُرُ اللَّهَ", bn:"যে মানুষের শুকরিয়া আদায় করে না, সে আল্লাহরও শুকরিয়া আদায় করে না।", lesson:"মানুষের প্রতি কৃতজ্ঞতা প্রকাশ করা।", src:"তিরমিজি"},
+{ar:"اتَّقِ اللَّهَ حَيْثُمَا كُنْتَ", bn:"তুমি যেখানেই থাকো আল্লাহকে ভয় করো।", lesson:"সর্বদা তাকওয়া অবলম্বন করা।", src:"তিরমিজি"},
+{ar:"أَحِبَّ اللَّهَ لِمَا يُغْذِيكَ بِهِ نِعَمَهُ", bn:"আল্লাহকে ভালোবাসো তাঁর নেয়ামতের জন্য।", lesson:"আল্লাহর প্রতি কৃতজ্ঞতা এবং ভালোবাসা।", src:"তিরমিজি"},
+{ar:"مَنْ كَانَ آخِرُ كَلَامِهِ لَا إِلَهَ إِلَّا اللَّهُ دَخَلَ الْجَنَّةَ", bn:"যার শেষ কথা 'লা ইলাহা ইল্লাল্লাহ' হবে সে জান্নাতে যাবে।", lesson:"শেষ নিঃশ্বাসে কালিমা পড়ার অভ্যাস করা।", src:"আবু দাউদ"},
+{ar:"إِنَّمَا بُعِثْتُ لِأُتَمِّمَ مَكَارِمَ الْأَخْلَاقِ", bn:"আমাকে উত্তম চরিত্র সম্পূর্ণ করার জন্য পাঠানো হয়েছে।", lesson:"চরিত্রের উন্নতি এবং ভালো আচরণ।", src:"মালিক"},
+{ar:"تَبَسُّمُكَ فِي وَجْهِ أَخِيكَ صَدَقَةٌ", bn:"তোমার ভাইয়ের মুখে হাসি দেওয়াও সাদাকাহ।", lesson:"অন্যকে খুশি করা এবং হাসি দান করা।", src:"তিরমিজি"},
+{ar:"مَنْ سَلَكَ طَرِيقًا يَلْتَمِسُ فِيهِ عِلْمًا سَهَّلَ اللَّهُ لَهُ طَرِيقًا إِلَى الْجَنَّةِ", bn:"যে ব্যক্তি জ্ঞান অর্জনের পথে চলে, আল্লাহ তার জন্য জান্নাতের পথ সহজ করে দেন।", lesson:"জ্ঞান অর্জনের গুরুত্ব।", src:"সহীহ মুসলিম"},
+{ar:"إِيَّاكُمْ وَالظَّنَّ فَإِنَّ الظَّنَّ أَكْذَبُ الْحَدِيثِ", bn:"তোমরা ধারণা থেকে বাঁচো, কারণ ধারণা সবচেয়ে মিথ্যা কথা।", lesson:"অন্যের সম্পর্কে খারাপ ধারণা না করা।", src:"সহীহ বুখারী"},
+{ar:"الْمُسْلِمُ أَخُو الْمُسْلِمِ لَا يَظْلِمُهُ وَلَا يُسْلِمُهُ", bn:"মুসলিম মুসলিমের ভাই, সে তার উপর জুলুম করে না এবং তাকে বিপদে ফেলে না।", lesson:"ভ্রাতৃত্ব এবং পরস্পরের সাহায্য।", src:"সহীহ বুখারী"},
+{ar:"مَنْ كَذَبَ عَلَيَّ مُتَعَمِّدًا فَلْيَتَبَوَّأْ مَقْعَدَهُ مِنَ النَّارِ", bn:"যে ব্যক্তি ইচ্ছাকৃতভাবে আমার উপর মিথ্যা বলে, সে তার ঠিকানা জাহান্নামে বানিয়ে নিক।", lesson:"হাদিসের প্রতি সততা এবং মিথ্যা না বলা।", src:"সহীহ বুখারী"},
+{ar:"لَا تَغْضَبْ وَلَكَ الْجَنَّةُ", bn:"রাগ করো না, তোমার জন্য জান্নাত।", lesson:"রাগ নিয়ন্ত্রণ করা এবং ধৈর্য ধারণ করা।", src:"সহীহ বুখারী"},
+{ar:"مَنْ يُرِدِ اللَّهُ بِهِ خَيْرًا يُصِبْ مِنْهُ", bn:"আল্লাহ যার ভালো চান, তাকে বিপদে ফেলেন।", lesson:"বিপদে ধৈর্য ধারণ করা এবং আল্লাহর রহমতের আশা করা।", src:"সহীহ বুখারী"},
+{ar:"لَا يُؤْمِنُ أَحَدُكُمْ حَتَّى أَكُونَ أَحَبَّ إِلَيْهِ مِنْ وَلَدِهِ وَوَالِدِهِ وَالنَّاسِ أَجْمَعِينَ", bn:"তোমাদের কেউ মুমিন হবে না যতক্ষণ না আমি তার কাছে তার সন্তান, পিতা-মাতা ও সকল মানুষ থেকে বেশি প্রিয় হই।", lesson:"রাসূলুল্লাহ (সা.)-কে ভালোবাসা।", src:"সহীহ বুখারী"},
+{ar:"مَنْ حَافَظَ عَلَى صَلَوَاتِ الْخَمْسِ كَانَ فِي جِوَارِ اللَّهِ", bn:"যে ব্যক্তি পাঁচ ওয়াক্ত নামাজের প্রতি যত্নবান হয়, সে আল্লাহর আশ্রয়ে থাকে।", lesson:"নামাজের প্রতি যত্নবান হওয়া।", src:"তিরমিজি"},
+{ar:"صَلَاةُ الْجَمَاعَةِ تَفْضُلُ صَلَاةَ الْفَذِّ بِسَبْعٍ وَعِشْرِينَ دَرَجَةً", bn:"জামাতে নামাজ পড়া একা নামাজ পড়ার চেয়ে ২৭ গুণ বেশি উত্তম।", lesson:"জামাতে নামাজ পড়ার গুরুত্ব।", src:"সহীহ বুখারী"},
+{ar:"مَنْ أَفْطَرَ صَائِمًا كَانَ لَهُ مِثْلُ أَجْرِهِ", bn:"যে ব্যক্তি রোজাদারকে ইফতার করায়, তারও রোজাদারের সমান সওয়াব হয়।", lesson:"অন্যদের সাহায্য করা এবং দান করা।", src:"তিরমিজি"},
+{ar:"الصِّيَامُ جُنَّةٌ", bn:"রোজা হলো ঢাল।", lesson:"রোজা রাখা এবং গুনাহ থেকে বাঁচা।", src:"সহীহ বুখারী"},
+{ar:"مَنْ قَرَأَ حَرْفًا مِنْ كِتَابِ اللَّهِ فَلَهُ حَسَنَةٌ", bn:"যে ব্যক্তি কুরআনের একটি অক্ষর পড়ে, তার জন্য একটি নেকি।", lesson:"কুরআন তিলাওয়াতের গুরুত্ব।", src:"তিরমিজি"},
+{ar:"خَيْرُ الصَّدَقَةِ مَا كَانَ عَنْ ظَهْرِ غِنًى", bn:"সর্বোত্তম সাদাকাহ হলো যা সচ্ছল অবস্থায় দেওয়া হয়।", lesson:"দান করার গুরুত্ব।", src:"সহীহ বুখারী"},
+{ar:"الْيَدُ الْعُلْيَا خَيْرٌ مِنَ الْيَدِ السُّفْلَى", bn:"উপরের হাত নিচের হাত থেকে উত্তম।", lesson:"দানকারী হওয়া এবং গ্রহণকারী না হওয়া।", src:"সহীহ বুখারী"},
+{ar:"مَنْ لَا يَرْحَمْ لَا يُرْحَمْ", bn:"যে দয়া করে না, তার প্রতি দয়া করা হয় না।", lesson:"সব সৃষ্টির প্রতি দয়ালু হওয়া।", src:"সহীহ বুখারী"},
+{ar:"السَّخِيُّ قَرِيبٌ مِنَ اللَّهِ", bn:"দানশীল ব্যক্তি আল্লাহর নিকটবর্তী।", lesson:"দানশীল হওয়ার গুরুত্ব।", src:"তিরমিজি"},
+{ar:"الْبَخِيلُ بَعِيدٌ مِنَ اللَّهِ", bn:"কৃপণ ব্যক্তি আল্লাহ থেকে দূরে।", lesson:"কৃপণতা থেকে বাঁচা।", src:"তিরমিজি"},
+{ar:"مَنْ صَلَّى عَلَيَّ حِينَ يُصْبِحُ وَحِينَ يُمْسِي كَانَتْ شَفَاعَتِي لَهُ", bn:"যে ব্যক্তি সকাল-সন্ধ্যায় আমার উপর দরূদ পড়ে, তার জন্য আমার সুপারিশ হবে।", lesson:"দরূদ পড়ার অভ্যাস করা।", src:"তিরমিজি"},
+{ar:"إِنَّ اللَّهَ كَرِيمٌ يُحِبُّ الْكَرَمَ", bn:"আল্লাহ দানশীল, তিনি দানশীলতাকে পছন্দ করেন।", lesson:"দানশীল হওয়া এবং উদারতা।", src:"তিরমিজি"},
+{ar:"مَنْ كَانَ يُؤْمِنُ بِاللَّهِ وَالْيَوْمِ الْآخِرِ فَلْيُكْرِمْ جَارَهُ", bn:"যে ব্যক্তি আল্লাহ ও শেষ দিনের প্রতি বিশ্বাস রাখে, সে তার প্রতিবেশীকে সম্মান করবে।", lesson:"প্রতিবেশীর সাথে ভালো ব্যবহার।", src:"সহীহ বুখারী"},
+{ar:"الْجَارُ ثُمَّ الدَّارُ", bn:"প্রতিবেশী, তারপর ঘর।", lesson:"প্রতিবেশীর গুরুত্ব।", src:"তিরমিজি"},
+{ar:"مَنْ لَا يَشْكُرُ الْقَلِيلَ لَا يَشْكُرُ الْكَثِيرَ", bn:"যে কম শুকরিয়া আদায় করে না, সে বেশি শুকরিয়া আদায় করে না।", lesson:"সব সময় কৃতজ্ঞতা প্রকাশ করা।", src:"তিরমিজি"},
+{ar:"إِنَّ اللَّهَ يُحِبُّ الْعَبْدَ التَّقِيَّ الْغَنِيَّ الْخَفِيَّ", bn:"আল্লাহ সেই বান্দাকে ভালোবাসেন যে তাকওয়াবান, ধনী এবং গোপনীয়।", lesson:"তাকওয়া ও বিনয়।", src:"সহীহ মুসলিম"},
+{ar:"لَا تَحْقِرَنَّ مِنَ الْمَعْرُوفِ شَيْئًا", bn:"ভালো কাজের কোনোটিকে তুচ্ছ মনে করো না।", lesson:"ছোট ভালো কাজও গুরুত্বপূর্ণ।", src:"সহীহ মুসলিম"},
+{ar:"مَنْ كَفَّ غَضَبَهُ كَفَّ اللَّهُ عَذَابَهُ", bn:"যে তার রাগ সংযত করে, আল্লাহ তার শাস্তি সংযত করেন।", lesson:"রাগ নিয়ন্ত্রণ করা।", src:"তিরমিজি"},
+{ar:"مَنْ تَوَاضَعَ لِلَّهِ رَفَعَهُ اللَّهُ", bn:"যে আল্লাহর জন্য নম্র হয়, আল্লাহ তাকে উন্নীত করেন।", lesson:"নম্রতা ও বিনয়।", src:"সহীহ মুসলিম"},
+{ar:"لَا يَدْخُلُ الْجَنَّةَ مَنْ كَانَ فِي قَلْبِهِ مِثْقَالُ ذَرَّةٍ مِنْ كِبْرٍ", bn:"যার অন্তরে অণু পরিমাণ অহংকার আছে, সে জান্নাতে প্রবেশ করবে না।", lesson:"অহংকার থেকে বাঁচা।", src:"সহীহ মুসলিম"},
+{ar:"مَنْ أَكَلَ طَيِّبًا وَعَمِلَ صَالِحًا وَقَالَ مَا يَنْبَغِي دَخَلَ الْجَنَّةَ", bn:"যে পবিত্র খায়, ভালো কাজ করে এবং যা উচিত বলে, সে জান্নাতে যাবে।", lesson:"পবিত্রতা ও ভালো কাজ।", src:"তিরমিজি"},
+{ar:"إِنَّ اللَّهَ طَيِّبٌ لَا يَقْبَلُ إِلَّا طَيِّبًا", bn:"আল্লাহ পবিত্র, তিনি পবিত্র ছাড়া কিছু গ্রহণ করেন না।", lesson:"পবিত্র ও হালাল জিনিস ব্যবহার করা।", src:"সহীহ মুসলিম"},
+{ar:"مَنْ قَالَ لَا إِلَهَ إِلَّا اللَّهُ دَخَلَ الْجَنَّةَ", bn:"যে বলে 'লা ইলাহা ইল্লাল্লাহ' সে জান্নাতে যাবে।", lesson:"কালিমা পড়ার গুরুত্ব।", src:"সহীহ বুখারী"}
+];
+
+// ---------- TAJWEED RULES ----------
+const tajweedRules = [
+{title:"নূন সাকিন ও তানভীনের নিয়ম", desc:"ইযহার, ইদগাম, ইকলাব ও ইখফা — এই চারটি নিয়মে নূন সাকিন বা তানভীনের উচ্চারণ পরবর্তী হরফ অনুযায়ী পরিবর্তিত হয়।", gold:false},
+{title:"মীম সাকিনের নিয়ম", desc:"ইখফা শাফাবী, ইদগাম মিসলাইন ও ইযহার শাফাবী — মীম সাকিনের পরবর্তী হরফ অনুযায়ী তিনটি নিয়ম প্রযোজ্য হয়।", gold:true},
+{title:"মাদ্দ (দীর্ঘস্বর)", desc:"আলিফ, ওয়াও ও ইয়া হরফের মাধ্যমে স্বরধ্বনি দীর্ঘায়িত করার নিয়মকে মাদ্দ বলে। মাদ্দে আসলি ও মাদ্দে ফরঈ — এই দুই প্রকার রয়েছে।", gold:false},
+{title:"কলকলা", desc:"ق ط ب ج د — এই পাঁচটি হরফ সাকিন অবস্থায় থাকলে উচ্চারণে একধরনের কম্পন সৃষ্টি হয়, একে কলকলা বলা হয়।", gold:true},
+{title:"মাখরাজ (উচ্চারণ স্থান)", desc:"জাওফ (মুখগহ্বর), হালাক (গলা), লিসান (জিহবা), শাফাতান (ঠোঁট), খাইশুম (নাসিকা) — এই পাঁচটি স্থান থেকে আরবি হরফ উচ্চারিত হয়।", gold:false},
+{title:"সিফাত (গুণাবলি)", desc:"যিদ (শক্ত) ও লিন (নরম) — এই দুই প্রকার সিফাত রয়েছে। সিফাত লাযিমাহ (১৭টি) ও সিফাত আরিযাহ (৭টি)।", gold:true},
+{title:"ইযহার (স্পষ্ট উচ্চারণ)", desc:"ن سাকিন বা তানভীনের পর حرف حلقী (ء، ه، ع، ح، غ، خ) আসলে স্পষ্ট উচ্চারণ করা হয়।", gold:false},
+{title:"ইদগাম (মিশ্রণ)", desc:"ن সাকিন বা তানভীনের পর ي، ر، م، ل، و، ن — এই ছয়টি হরফ আসলে ইদগাম করা হয়।", gold:false},
+{title:"ইকলাব (পরিবর্তন)", desc:"ن সাকিন বা তানভীনের পর ب আসলে তা মীমে পরিণত হয়।", gold:true},
+{title:"ইখফা (গোপন উচ্চারণ)", desc:"ن সাকিন বা তানভীনের পর باقي حروف (অবশিষ্ট ১৫টি) আসলে গোপন উচ্চারণ করা হয়।", gold:false},
+{title:"মাদ্দ আসলি", desc:"২ হারাকাহ (দুই গুণ) দীর্ঘ করা হয়।", gold:false},
+{title:"মাদ্দ ফরঈ", desc:"৪-৬ হারাকাহ (চার থেকে ছয় গুণ) দীর্ঘ করা হয়।", gold:true}
+];
+
+// ---------- DUAS ----------
+const duas = [
+{title:"ঘুম থেকে ওঠার দোয়া", ar:"الْحَمْدُ لِلَّهِ الَّذِي أَحْيَانَا بَعْدَ مَا أَمَاتَنَا وَإِلَيْهِ النُّشُورُ", bn:"সমস্ত প্রশংসা আল্লাহর জন্য, যিনি আমাদের মৃত্যুর পর জীবিত করেছেন এবং তাঁরই দিকে পুনরুত্থান।"},
+{title:"খাবার শুরুর দোয়া", ar:"بِسْمِ اللَّهِ", bn:"আল্লাহর নামে (শুরু করছি)।"},
+{title:"ঘর থেকে বের হওয়ার দোয়া", ar:"بِسْمِ اللَّهِ تَوَكَّلْتُ عَلَى اللَّهِ", bn:"আল্লাহর নামে (বের হচ্ছি), আমি আল্লাহর উপর ভরসা করলাম।"},
+{title:"ঘুমানোর আগের দোয়া", ar:"بِاسْمِكَ اللَّهُمَّ أَمُوتُ وَأَحْيَا", bn:"হে আল্লাহ, তোমার নামে আমি মরি এবং তোমার নামেই জীবিত হই।"},
+{title:"ওজু করার দোয়া", ar:"بِسْمِ اللَّهِ اللَّهُمَّ اغْفِرْ لِي ذَنْبِي وَوَسِّعْ لِي فِي دَارِي وَبَارِكْ لِي فِي رِزْقِي", bn:"আল্লাহর নামে, হে আল্লাহ! আমার গুনাহ মাফ কর, আমার ঘর প্রশস্ত কর এবং আমার রিজিকে বরকত দান কর।"},
+{title:"মসজিদে প্রবেশের দোয়া", ar:"اللَّهُمَّ افْتَحْ لِي أَبْوَابَ رَحْمَتِكَ", bn:"হে আল্লাহ! আমার জন্য তোমার রহমতের দরজা খুলে দাও।"},
+{title:"মসজিদ থেকে বের হওয়ার দোয়া", ar:"اللَّهُمَّ إِنِّي أَسْأَلُكَ مِنْ فَضْلِكَ", bn:"হে আল্লাহ! আমি তোমার কাছে তোমার অনুগ্রহ প্রার্থনা করি।"},
+{title:"ঈদ বা খুশির দোয়া", ar:"تَقَبَّلَ اللَّهُ مِنَّا وَمِنْكُمْ", bn:"আল্লাহ আমাদের থেকে এবং তোমাদের থেকে কবুল করুন।"}
+];
+
+/* ============================================================
+   RENDER FUNCTIONS
+   ============================================================ */
+
+function bnDigits(n){
+  const map = {'0':'০','1':'১','2':'২','3':'৩','4':'৪','5':'৫','6':'৬','7':'৭','8':'৮','9':'৯'};
+  return String(n).split('').map(d=>map[d]!==undefined?map[d]:d).join('');
+}
+
+// Popular Surah
+function renderPopular(){
+  const popularNums = [1,2,18,32,36,55,67,112];
+  const wrap = document.getElementById('popularScroll');
+  wrap.innerHTML = popularNums.map(n=>{
+    const s = surahs[n-1];
+    return `<div class="pop-card" data-num="${s.num}">
+      <div class="pop-head"><span class="pop-ar">${s.ar}</span><span>${bnDigits(s.num)}</span></div>
+      <div class="pop-bn">${s.bn}</div>
+      <div class="pop-meaning">${s.meaning}</div>
+      <div class="pop-desc">আয়াত: ${bnDigits(s.ayat)} · ${s.type==='Makki'?'মক্কী':'মাদানী'}</div>
+    </div>`;
+  }).join('');
+}
+
+// Surah List
+function renderSurahList(filter){
+  const list = document.getElementById('surahList');
+  const q = (filter||'').trim().toLowerCase();
+  const filtered = surahs.filter(s=>{
+    if(!q) return true;
+    return s.bn.toLowerCase().includes(q) || s.en.toLowerCase().includes(q) || s.meaning.toLowerCase().includes(q) || String(s.num)===q;
+  });
+  document.getElementById('noResult').style.display = filtered.length ? 'none' : 'block';
+  list.innerHTML = filtered.map(s=>`
+    <div class="surah-card" data-num="${s.num}">
+      <div class="surah-badge">${bnDigits(s.num)}</div>
+      <div class="surah-info">
+        <div class="bn-name">${s.bn}</div>
+        <div class="en-name">${s.en} · ${s.meaning}</div>
+        <div class="sub">
+          <span class="type-tag ${s.type==='Makki'?'type-makki':'type-madani'}">${s.type==='Makki'?'মক্কী':'মাদানী'}</span>
+          <span>আয়াত: ${bnDigits(s.ayat)}</span>
+        </div>
+      </div>
+      <div class="ar-name">${s.ar}</div>
+    </div>
+  `).join('');
+}
+
+// Juz
+function renderJuz(){
+  const grid = document.getElementById('juzGrid');
+  let html='';
+  for(let i=1;i<=30;i++){
+    html += `<div class="juz-card" data-juz="${i}"><div class="num">${bnDigits(i)}</div><div class="lbl">পারা</div></div>`;
+  }
+  grid.innerHTML = html;
+}
+
+// Letters
+function renderLetters(){
+  const letters = [
+["ا","আলিফ"],["ب","বা"],["ت","তা"],["ث","ছা"],["ج","জীম"],["ح","হা"],
+["خ","খা"],["د","দাল"],["ذ","যাল"],["ر","রা"],["ز","যা"],["س","সীন"],
+["ش","শীন"],["ص","সোয়াদ"],["ض","দোয়াদ"],["ط","ত্বোয়া"],["ظ","জোয়া"],["ع","আইন"],
+["غ","গাইন"],["ف","ফা"],["ق","ক্বাফ"],["ك","কাফ"],["ل","লাম"],["م","মীম"],
+["ن","নূন"],["و","ওয়াও"],["ه","হা"],["ء","হামযা"],["ي","ইয়া"]
+];
+  const grid = document.getElementById('letterGrid');
+  grid.innerHTML = letters.map(l=>`<div class="letter-card"><div class="ar">${l[0]}</div><div class="bn">${l[1]}</div></div>`).join('');
+}
+
+// Tajweed Rules
+function renderTajweed(){
+  const wrap = document.getElementById('tajweedRules');
+  wrap.innerHTML = tajweedRules.map(r=>`
+    <div class="rule-card ${r.gold?'gold-edge':''}">
+      <h4>${r.title}</h4>
+      <p>${r.desc}</p>
+    </div>
+  `).join('');
+}
+
+// Hadith (50)
+function renderHadith(){
+  const wrap = document.getElementById('hadithList');
+  wrap.innerHTML = hadiths.map(h=>`
+    <div class="hadith-card">
+      <div class="ar-text">${h.ar}</div>
+      <p class="bn-text">${h.bn}</p>
+      <div class="lesson"><b>শিক্ষা:</b> ${h.lesson}</div>
+      <div class="src">${h.src}</div>
+    </div>
+  `).join('');
+}
+
+// Dua
+function renderDua(){
+  const wrap = document.getElementById('duaList');
+  wrap.innerHTML = duas.map(d=>`
+    <div class="dua-card">
+      <h4>${d.title}</h4>
+      <div class="ar-text">${d.ar}</div>
+      <p class="bn-text">${d.bn}</p>
+    </div>
+  `).join('');
+}
+
+/* ============================================================
+   AUTH (localStorage)
+   ============================================================ */
+const session = { name:'', email:'' };
+
+// Check if already logged in
+const savedUser = localStorage.getItem('dwin_user');
+if(savedUser){
+  const data = JSON.parse(savedUser);
+  session.name = data.name || 'বন্ধু';
+  session.email = data.email || '';
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('appRoot').style.display = 'block';
+  document.getElementById('welcomeName').textContent = session.name;
+  document.getElementById('drawerName').textContent = 'ক্রিয়েটেড বাই আজহারুল';
+  document.getElementById('drawerEmail').textContent = 'সিলেট | ১৯ বছর | জেনারেল শিক্ষিত';
+  document.getElementById('drawerAvatar').textContent = 'আ';
+} else {
+  document.getElementById('authScreen').style.display = 'flex';
+  document.getElementById('appRoot').style.display = 'none';
+}
+
+function switchAuthTab(tab){
+  document.querySelectorAll('.auth-tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.auth===tab));
+  document.getElementById('loginForm').classList.toggle('active', tab==='login');
+  document.getElementById('registerForm').classList.toggle('active', tab==='register');
+}
+document.querySelectorAll('.auth-tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>switchAuthTab(btn.dataset.auth));
+});
+
+function enterApp(name, email){
+  session.name = name || 'বন্ধু';
+  session.email = email || '';
+  localStorage.setItem('dwin_user', JSON.stringify({name: session.name, email: session.email}));
+  document.getElementById('authScreen').style.display = 'none';
+  document.getElementById('appRoot').style.display = 'block';
+  document.getElementById('welcomeName').textContent = session.name;
+  document.getElementById('drawerName').textContent = 'ক্রিয়েটেড বাই আজহারুল';
+  document.getElementById('drawerEmail').textContent = 'সিলেট | ১৯ বছর | জেনারেল শিক্ষিত';
+  document.getElementById('drawerAvatar').textContent = 'আ';
+}
+
+document.getElementById('loginForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const email = document.getElementById('loginEmail').value.trim();
+  const msg = document.getElementById('loginMsg');
+  if(!email){ msg.textContent = 'ইমেইল দিন'; msg.className='auth-msg error'; return; }
+  msg.textContent = 'সফলভাবে লগইন হয়েছে!'; msg.className='auth-msg success';
+  const name = email.split('@')[0];
+  setTimeout(()=>enterApp(name, email), 300);
+});
+
+document.getElementById('registerForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  const name = document.getElementById('regName').value.trim();
+  const email = document.getElementById('regEmail').value.trim();
+  const msg = document.getElementById('registerMsg');
+  if(!name || !email){ msg.textContent = 'নাম ও ইমেইল দিন'; msg.className='auth-msg error'; return; }
+  msg.textContent = 'রেজিস্ট্রেশন সফল হয়েছে!'; msg.className='auth-msg success';
+  setTimeout(()=>enterApp(name, email), 300);
+});
+
+/* ============================================================
+   DROPDOWN MENU
+   ============================================================ */
+const dropdownMenu = document.getElementById('dropdownMenu');
+let dropdownOpen = false;
+
+// Toggle dropdown on brand click
+document.getElementById('brandClick').addEventListener('click', function(e){
+  e.stopPropagation();
+  dropdownOpen = !dropdownOpen;
+  dropdownMenu.classList.toggle('open', dropdownOpen);
+});
+
+// Close dropdown on outside click
+document.addEventListener('click', function(e){
+  if(!e.target.closest('.brand') && !e.target.closest('.dropdown-menu')){
+    dropdownMenu.classList.remove('open');
+    dropdownOpen = false;
+  }
+});
+
+// Dropdown menu items
+document.querySelectorAll('.dropdown-menu a[data-panel]').forEach(item=>{
+  item.addEventListener('click', function(e){
+    const panel = this.dataset.panel;
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b.dataset.panel===panel));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.id===panel));
+    dropdownMenu.classList.remove('open');
+    dropdownOpen = false;
+    // Scroll to top
+    window.scrollTo({top:0, behavior:'smooth'});
+  });
+});
+
+// Dropdown dark toggle
+document.getElementById('dropdownDarkToggle').addEventListener('click', function(){
+  darkMode = !darkMode;
+  applyTheme();
+  dropdownMenu.classList.remove('open');
+  dropdownOpen = false;
+});
+
+/* ============================================================
+   DRAWER
+   ============================================================ */
+const drawer = document.getElementById('drawer');
+const drawerOverlay = document.getElementById('drawerOverlay');
+function openDrawer(){ drawer.classList.add('open'); drawerOverlay.classList.add('open'); }
+function closeDrawer(){ drawer.classList.remove('open'); drawerOverlay.classList.remove('open'); }
+document.getElementById('menuBtn').addEventListener('click', openDrawer);
+document.getElementById('drawerClose').addEventListener('click', closeDrawer);
+drawerOverlay.addEventListener('click', closeDrawer);
+
+document.querySelectorAll('.drawer-menu-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.drawer-menu-btn').forEach(b=>b.classList.toggle('active', b===btn));
+    document.querySelectorAll('.drawer-view').forEach(v=>v.classList.toggle('active', v.id===btn.dataset.view));
+  });
+});
+
+/* ============================================================
+   TABS
+   ============================================================ */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.toggle('active', b===btn));
+    document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('active', p.id===btn.dataset.panel));
+  });
+});
+
+/* ============================================================
+   SEARCH
+   ============================================================ */
+const searchInput = document.getElementById('searchInput');
+const clearBtn = document.getElementById('clearSearch');
+searchInput.addEventListener('input', ()=>{
+  clearBtn.classList.toggle('show', !!searchInput.value);
+  renderSurahList(searchInput.value);
+});
+clearBtn.addEventListener('click', ()=>{
+  searchInput.value=''; clearBtn.classList.remove('show'); renderSurahList('');
+});
+
+/* ============================================================
+   THEME TOGGLE
+   ============================================================ */
+let darkMode = localStorage.getItem('darkMode') === 'true';
+function applyTheme(){
+  document.documentElement.setAttribute('data-theme', darkMode ? 'dark' : 'light');
+  document.getElementById('themeToggle').textContent = darkMode ? '☀️' : '🌙';
+  localStorage.setItem('darkMode', darkMode);
+}
+document.getElementById('themeToggle').addEventListener('click', ()=>{ darkMode = !darkMode; applyTheme(); });
+document.getElementById('themeToggleDrawer').addEventListener('click', ()=>{ darkMode = !darkMode; applyTheme(); });
+applyTheme();
+
+/* ============================================================
+   AMAL TRACKER
+   ============================================================ */
+let amal = {
+  salah: parseInt(localStorage.getItem('amal_salah')) || 0,
+  quran: parseInt(localStorage.getItem('amal_quran')) || 0,
+  tasbih: parseInt(localStorage.getItem('amal_tasbih')) || 0,
+  durud: parseInt(localStorage.getItem('amal_durud')) || 0,
+  istigfar: parseInt(localStorage.getItem('amal_istigfar')) || 0
+};
+
+function updateAmalUI(){
+  document.getElementById('amalSalah').textContent = Math.min(amal.salah, 5)+'/5';
+  document.getElementById('amalQuran').textContent = amal.quran;
+  document.getElementById('amalTasbih').textContent = amal.tasbih;
+  document.getElementById('amalDurud').textContent = amal.durud;
+  document.getElementById('amalIstigfar').textContent = amal.istigfar;
+  Object.keys(amal).forEach(k=>localStorage.setItem('amal_'+k, amal[k]));
+}
+
+document.querySelectorAll('.amal-btn[data-amal]').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    const key = btn.dataset.amal;
+    if(key === 'salah' && amal.salah < 5) amal.salah++;
+    else if(key === 'quran') amal.quran++;
+    else if(key === 'tasbih') amal.tasbih += 10;
+    else if(key === 'durud') amal.durud++;
+    else if(key === 'istigfar') amal.istigfar += 10;
+    updateAmalUI();
+  });
+});
+
+document.getElementById('resetAmal').addEventListener('click', ()=>{
+  Object.keys(amal).forEach(k=>amal[k]=0);
+  updateAmalUI();
+});
+updateAmalUI();
+
+/* ============================================================
+   LOGOUT
+   ============================================================ */
+document.getElementById('logoutBtn').addEventListener('click', ()=>{
+  localStorage.removeItem('dwin_user');
+  document.getElementById('appRoot').style.display='none';
+  document.getElementById('authScreen').style.display='flex';
+  document.getElementById('loginForm').reset();
+  document.getElementById('registerForm').reset();
+  document.getElementById('loginMsg').textContent='';
+  document.getElementById('registerMsg').textContent='';
+  switchAuthTab('login');
+  closeDrawer();
+});
+
+/* ============================================================
+   FONT SIZE
+   ============================================================ */
+let fontSize = parseInt(localStorage.getItem('fontSize')) || 16;
+document.body.style.fontSize = fontSize + 'px';
+document.getElementById('fontSmall').addEventListener('click', ()=>{
+  if(fontSize > 12){ fontSize--; document.body.style.fontSize = fontSize + 'px'; localStorage.setItem('fontSize', fontSize); }
+});
+document.getElementById('fontLarge').addEventListener('click', ()=>{
+  if(fontSize < 22){ fontSize++; document.body.style.fontSize = fontSize + 'px'; localStorage.setItem('fontSize', fontSize); }
+});
+
+/* ============================================================
+   VOICE SEARCH & COMMANDS
+   ============================================================ */
+const voiceSearchBtn = document.getElementById('voiceSearchBtn');
+const voiceCommandBtn = document.getElementById('voiceCommandBtn');
+let recognition = null;
+
+if('webkitSpeechRecognition' in window || 'SpeechRecognition' in window){
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  recognition = new SpeechRecognition();
+  recognition.lang = 'bn-BD';
+  recognition.continuous = false;
+  recognition.interimResults = false;
+
+  recognition.onresult = function(event){
+    const transcript = event.results[0][0].transcript.toLowerCase().trim();
+    console.log('ভয়েস ইনপুট:', transcript);
+    
+    // Voice commands
+    if(transcript.includes('সূরা ফাতিহা')){
+      window.open('https://quran.com/1', '_blank');
+    } else if(transcript.includes('সূরা বাকারা')){
+      window.open('https://quran.com/2', '_blank');
+    } else if(transcript.includes('সূরা') || transcript.includes('সুরা')){
+      // Extract number or name
+      const match = transcript.match(/(\d+)/);
+      if(match){
+        window.open(`https://quran.com/${match[1]}`, '_blank');
+      }
+    } else if(transcript.includes('ডার্ক মোড')){
+      darkMode = true; applyTheme();
+    } else if(transcript.includes('লাইট মোড')){
+      darkMode = false; applyTheme();
+    } else if(transcript.includes('নামাজের সময়')){
+      document.querySelector('[data-panel="morePanel"]').click();
+      setTimeout(()=>{
+        document.getElementById('prayerTimes').scrollIntoView({behavior:'smooth'});
+      }, 300);
+    } else if(transcript.includes('কিবলা')){
+      document.querySelector('[data-panel="morePanel"]').click();
+      setTimeout(()=>{
+        document.querySelector('.compass-container').scrollIntoView({behavior:'smooth'});
+      }, 300);
+    } else if(transcript.includes('হাদিস')){
+      document.querySelector('[data-panel="hadithPanel"]').click();
+    } else if(transcript.includes('তাজবিদ')){
+      document.querySelector('[data-panel="tajweedPanel"]').click();
+    } else if(transcript.includes('জুয') || transcript.includes('পারা')){
+      document.querySelector('[data-panel="juzPanel"]').click();
+    } else if(transcript.includes('দোয়া')){
+      document.querySelector('[data-panel="duaPanel"]').click();
+    } else if(transcript.includes('সালাত') || transcript.includes('নামাজ')){
+      document.querySelector('[data-panel="salahPanel"]').click();
+    } else {
+      // Search in search box
+      searchInput.value = transcript;
+      renderSurahList(transcript);
+      clearBtn.classList.toggle('show', !!searchInput.value);
+      // Switch to Quran panel
+      document.querySelector('[data-panel="quranPanel"]').click();
+    }
+    
+    voiceSearchBtn.classList.remove('listening');
+    voiceCommandBtn.classList.remove('listening');
+  };
+
+  recognition.onerror = function(event){
+    console.error('Voice error:', event.error);
+    voiceSearchBtn.classList.remove('listening');
+    voiceCommandBtn.classList.remove('listening');
+    alert('ভয়েস রিকগনিশন কাজ করেনি। আবার চেষ্টা করুন।');
+  };
+
+  recognition.onend = function(){
+    voiceSearchBtn.classList.remove('listening');
+    voiceCommandBtn.classList.remove('listening');
+  };
+}
+
+// Voice Search Button
+voiceSearchBtn.addEventListener('click', function(){
+  if(!recognition){
+    alert('আপনার ব্রাউজার ভয়েস সার্চ সাপোর্ট করে না। Chrome ব্যবহার করুন।');
+    return;
+  }
+  if(this.classList.contains('listening')){
+    recognition.stop();
+    this.classList.remove('listening');
+    return;
+  }
+  this.classList.add('listening');
+  recognition.start();
+});
+
+// Voice Command Button
+voiceCommandBtn.addEventListener('click', function(){
+  if(!recognition){
+    alert('আপনার ব্রাউজার ভয়েস কমান্ড সাপোর্ট করে না। Chrome ব্যবহার করুন।');
+    return;
+  }
+  if(this.classList.contains('listening')){
+    recognition.stop();
+    this.classList.remove('listening');
+    return;
+  }
+  this.classList.add('listening');
+  recognition.start();
+});
+
+/* ============================================================
+   SURAH CLICK -> quran.com
+   ============================================================ */
+document.addEventListener('click', function(e){
+  const card = e.target.closest('.surah-card, .pop-card');
+  if(card){
+    const num = card.dataset.num;
+    if(num){
+      window.open(`https://quran.com/${num}`, '_blank');
+    }
+  }
+});
+
+// Juz click handler
+document.addEventListener('click', function(e){
+  const card = e.target.closest('.juz-card');
+  if(card){
+    const juz = card.dataset.juz;
+    window.open(`https://quran.com/juz/${juz}`, '_blank');
+  }
+});
+
+/* ============================================================
+   INIT
+   ============================================================ */
+renderPopular();
+renderSurahList('');
+renderJuz();
+renderLetters();
+renderTajweed();
+renderHadith();
+renderDua();
+
+console.log('✅ দ্বীন শিক্ষা — সম্পূর্ণ কাস্টমাইজড ভার্সন লোড হয়েছে!');
+console.log('📌 ক্রিয়েটেড বাই আজহারুল | সিলেট | ১৯ বছর | জেনারেল শিক্ষিত');
+console.log('📜 ৫০টি হাদিস | 🔤 ১২টি তাজবিদের নিয়ম | 📖 ১১৪টি সূরা');
+console.log('🎤 ভয়েস সার্চ ও কমান্ড সাপোর্ট');
+</script>
+</body>
+</html>
